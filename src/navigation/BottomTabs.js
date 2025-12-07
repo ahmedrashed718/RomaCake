@@ -71,11 +71,10 @@ const TabBarBackground = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: COLORS.white,
+        backgroundColor: COLORS.primary,
         borderTopLeftRadius: RFValue(10),
         borderTopRightRadius: RFValue(10),
         boredertopWidth: 1,
-        color: COLORS.primary,
       }}
     />
   );
@@ -146,7 +145,7 @@ export default function BottomTabs() {
         }}
       />
 
-      {/* Middle Tab - Courses */}
+      {/* Middle Tab */}
       <BottomTab.Screen
         name={'CakeScreen'}
         component={CakeScreen}

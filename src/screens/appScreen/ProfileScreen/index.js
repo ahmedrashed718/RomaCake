@@ -474,13 +474,13 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: RFValue(80),
   },
   sectionTitle: {
     fontSize: RFValue(17),
     fontFamily: FONTS.fontFamilyBold,
     color: COLORS.primary,
     marginBottom: RFValue(8),
-    textAlign: 'right',
   },
   subtitle: {
     fontSize: RFValue(12),
@@ -488,7 +488,6 @@ const styles = StyleSheet.create({
     color: '#666',
     lineHeight: RFValue(18),
     marginBottom: RFValue(16),
-    textAlign: 'right',
   },
   formContainer: {
     marginTop: RFValue(6),
@@ -549,6 +548,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: RFValue(80),
   },
   comingSoonText: {
     fontSize: RFValue(17),
@@ -646,8 +646,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   modalButtonConfirmText: {
-    fontSize: RFValue(15),
     fontFamily: FONTS.fontFamilyBold,
     color: '#fff',
+    ...FONTS.body2,
+    fontSize: RFValue(12),
   },
 });
