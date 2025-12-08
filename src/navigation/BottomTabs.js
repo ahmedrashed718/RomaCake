@@ -3,7 +3,6 @@ import {View, Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {
-  CakeScreen,
   CategoriesPage,
   ConnectWith,
   MyOrders,
@@ -129,7 +128,7 @@ export default function BottomTabs() {
       }}>
       {/* Home Tab 1 */}
       <BottomTab.Screen
-        name={'CakeScreen'}
+        name={'CategoriesPage'}
         component={CategoriesPage}
         options={{
           tabBarLabel: 'الكيك',

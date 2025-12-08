@@ -8,6 +8,8 @@ import {
   Dimensions,
   ScrollView,
   Animated,
+  Modal,
+  TextInput,
 } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import {FONTS, COLORS, Images} from '../../../constants';
@@ -88,6 +90,38 @@ const TEMP_PRODUCTS_DATA = [
   },
 ];
 
+// خيارات الفلتر
+const FILTER_OPTIONS = [
+  {
+    id: 'most-ordered',
+    label: 'الأكثر طلباً',
+    subtitle: 'الأعلى مبيعاً',
+    icon: 'fire',
+    color: '#FF6B6B',
+  },
+  {
+    id: 'highest-rating',
+    label: 'أعلى تقييم',
+    subtitle: 'حسب تقييم العملاء',
+    icon: 'star',
+    color: '#FFD700',
+  },
+  {
+    id: 'price-low-high',
+    label: 'البحث من الأرخص للأغلى',
+    subtitle: 'يوفر لك الأفضل',
+    icon: 'arrow-up',
+    color: '#4CAF50',
+  },
+  {
+    id: 'price-high-low',
+    label: 'البحث من الأغلى للأرخص',
+    subtitle: 'للمناسبات الخاصة',
+    icon: 'arrow-down',
+    color: '#9C27B0',
+  },
+];
+
 export default function ProductsPage() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -95,6 +129,9 @@ export default function ProductsPage() {
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [favorites, setFavorites] = useState({});
+  const [selectedFilter, setSelectedFilter] = useState('most-ordered');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Create animated values for each product card
   const animatedValues = useRef(
@@ -149,6 +186,34 @@ export default function ProductsPage() {
       ...prev,
       [productId]: !prev[productId],
     }));
+  };
+
+  const getFilteredProducts = () => {
+    let products = [...TEMP_PRODUCTS_DATA];
+
+    switch (selectedFilter) {
+      case 'most-ordered':
+        // ترتيب حسب عدد التقييمات (الأكثر طلباً)
+        return products.sort((a, b) => b.reviews - a.reviews);
+      case 'highest-rating':
+        // ترتيب حسب التقييم الأعلى
+        return products.sort((a, b) => b.rating - a.rating);
+      case 'price-low-high':
+        // ترتيب من الأرخص للأغلى
+        return products.sort((a, b) => a.price - b.price);
+      case 'price-high-low':
+        // ترتيب من الأغلى للأرخص
+        return products.sort((a, b) => b.price - a.price);
+      default:
+        return products;
+    }
+  };
+
+  const filteredProducts = getFilteredProducts();
+
+  const handleFilterSelect = filterId => {
+    setSelectedFilter(filterId);
+    setShowFilterModal(false);
   };
 
   const renderProductCard = ({item, index}) => {
@@ -285,9 +350,70 @@ export default function ProductsPage() {
             <Text style={styles.sectionTitle}>المنتجات المتاحة</Text>
           </View>
 
+          {/* Search Bar - Elegant Design */}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchInputWrapper}>
+              <Icon name="magnify" size={RFValue(18)} color={COLORS.primary} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="ابحث عن منتجك المفضل..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholderTextColor="#999"
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setSearchQuery('')}
+                  style={styles.clearButton}
+                  activeOpacity={0.7}>
+                  <Icon name="close-circle" size={RFValue(16)} color="#999" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <TouchableOpacity
+              style={styles.searchActionButton}
+              activeOpacity={0.8}>
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.secondary]}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                style={styles.searchActionGradient}>
+                <Icon name="tune-vertical" size={RFValue(18)} color="#fff" />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          {/* Filter Button - Compact & Elegant */}
+          <View style={styles.filterRow}>
+            <TouchableOpacity
+              style={styles.filterButton}
+              onPress={() => setShowFilterModal(true)}
+              activeOpacity={0.7}>
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.secondary]}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                style={styles.filterButtonGradient}>
+                <Icon name="tune-variant" size={RFValue(14)} color="#fff" />
+                <Text style={styles.filterButtonText}>ترتيب</Text>
+                <Icon name="chevron-down" size={RFValue(14)} color="#fff" />
+              </LinearGradient>
+            </TouchableOpacity>
+            <View style={styles.filterIndicator}>
+              <Icon
+                name={FILTER_OPTIONS.find(f => f.id === selectedFilter)?.icon || 'fire'}
+                size={RFValue(12)}
+                color={FILTER_OPTIONS.find(f => f.id === selectedFilter)?.color || '#FF6B6B'}
+              />
+              <Text style={styles.filterIndicatorText} numberOfLines={1}>
+                {FILTER_OPTIONS.find(f => f.id === selectedFilter)?.label || 'الأكثر طلباً'}
+              </Text>
+            </View>
+          </View>
+
           {/* Products Grid */}
           <View style={styles.gridContainer}>
-            {TEMP_PRODUCTS_DATA.map((item, index) => (
+            {filteredProducts.map((item, index) => (
               <View key={item.id} style={styles.productCardWrapper}>
                 {renderProductCard({item, index})}
               </View>
@@ -295,6 +421,67 @@ export default function ProductsPage() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Filter Modal - Elegant & Compact */}
+      <Modal
+        visible={showFilterModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowFilterModal(false)}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowFilterModal(false)}>
+          <TouchableOpacity activeOpacity={1} style={styles.modalContentWrapper}>
+            <View style={styles.modalContent}>
+              {/* Modal Handle */}
+              <View style={styles.modalHandle} />
+
+              <View style={styles.modalHeader}>
+                <Icon name="tune" size={RFValue(18)} color={COLORS.primary} />
+                <Text style={styles.modalTitle}>ترتيب المنتجات</Text>
+              </View>
+
+              {FILTER_OPTIONS.map((filter, index) => (
+                <TouchableOpacity
+                  key={filter.id}
+                  style={[
+                    styles.filterOption,
+                    selectedFilter === filter.id && styles.filterOptionActive,
+                    index === FILTER_OPTIONS.length - 1 && styles.filterOptionLast,
+                  ]}
+                  onPress={() => handleFilterSelect(filter.id)}
+                  activeOpacity={0.6}>
+                  <View
+                    style={[
+                      styles.filterIconContainer,
+                      {backgroundColor: filter.color + '15'},
+                    ]}>
+                    <Icon
+                      name={filter.icon}
+                      size={RFValue(16)}
+                      color={filter.color}
+                    />
+                  </View>
+                  <View style={styles.filterTextContainer}>
+                    <Text style={styles.filterLabel}>{filter.label}</Text>
+                    <Text style={styles.filterSubtitle}>{filter.subtitle}</Text>
+                  </View>
+                  {selectedFilter === filter.id && (
+                    <View style={styles.checkmarkContainer}>
+                      <Icon
+                        name="check"
+                        size={RFValue(16)}
+                        color="#fff"
+                      />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -391,6 +578,59 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
     marginBottom: -RFValue(12),
+  },
+
+  // Search Bar Styles
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: RFValue(8),
+    marginBottom: RFValue(12),
+  },
+  searchInputWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: RFValue(25),
+    paddingHorizontal: RFValue(15),
+    paddingVertical: RFValue(10),
+    gap: RFValue(8),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: RFValue(2)},
+    shadowOpacity: 0.08,
+    shadowRadius: RFValue(4),
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: RFValue(12),
+    fontFamily: FONTS.fontFamilyMedium,
+    color: COLORS.primary,
+    textAlign: 'right',
+    paddingVertical: 0,
+  },
+  clearButton: {
+    padding: RFValue(2),
+  },
+  searchActionButton: {
+    width: RFValue(45),
+    height: RFValue(45),
+    borderRadius: RFValue(22.5),
+    overflow: 'hidden',
+    shadowColor: COLORS.primary,
+    shadowOffset: {width: 0, height: RFValue(2)},
+    shadowOpacity: 0.25,
+    shadowRadius: RFValue(3),
+    elevation: 3,
+  },
+  searchActionGradient: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   gridContainer: {
     flexDirection: 'row',
@@ -530,5 +770,150 @@ const styles = StyleSheet.create({
     fontSize: RFValue(11),
     fontFamily: FONTS.fontFamilyBold,
     color: '#fff',
+  },
+
+  // Filter Button Styles - Compact & Elegant
+  filterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: RFValue(12),
+    gap: RFValue(8),
+  },
+  filterButton: {
+    borderRadius: RFValue(20),
+    overflow: 'hidden',
+    shadowColor: COLORS.primary,
+    shadowOffset: {width: 0, height: RFValue(2)},
+    shadowOpacity: 0.25,
+    shadowRadius: RFValue(3),
+    elevation: 3,
+  },
+  filterButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: RFValue(8),
+    paddingHorizontal: RFValue(12),
+    gap: RFValue(5),
+  },
+  filterButtonText: {
+    fontSize: RFValue(11),
+    fontFamily: FONTS.fontFamilyBold,
+    color: '#fff',
+  },
+  filterIndicator: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: RFValue(8),
+    paddingHorizontal: RFValue(12),
+    borderRadius: RFValue(20),
+    gap: RFValue(6),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: RFValue(1)},
+    shadowOpacity: 0.08,
+    shadowRadius: RFValue(3),
+    elevation: 2,
+  },
+  filterIndicatorText: {
+    flex: 1,
+    fontSize: RFValue(10),
+    fontFamily: FONTS.fontFamilyMedium,
+    color: COLORS.primary,
+  },
+
+  // Filter Modal Styles - Elegant Bottom Sheet
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'flex-end',
+  },
+  modalContentWrapper: {
+    width: '100%',
+  },
+  modalContent: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderTopLeftRadius: RFValue(25),
+    borderTopRightRadius: RFValue(25),
+    paddingHorizontal: RFValue(20),
+    paddingBottom: RFValue(25),
+    paddingTop: RFValue(8),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: RFValue(-3)},
+    shadowOpacity: 0.15,
+    shadowRadius: RFValue(8),
+    elevation: 8,
+  },
+  modalHandle: {
+    width: RFValue(40),
+    height: RFValue(4),
+    backgroundColor: '#E0E0E0',
+    borderRadius: RFValue(2),
+    alignSelf: 'center',
+    marginBottom: RFValue(15),
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: RFValue(15),
+    gap: RFValue(8),
+    paddingBottom: RFValue(12),
+    borderBottomWidth: 1,
+    borderBottomColor: '#f5f5f5',
+  },
+  modalTitle: {
+    fontSize: RFValue(14),
+    fontFamily: FONTS.funPlayBold,
+    color: COLORS.primary,
+  },
+  filterOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: RFValue(12),
+    borderRadius: RFValue(12),
+    marginBottom: RFValue(8),
+    backgroundColor: '#FAFAFA',
+    gap: RFValue(10),
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+  },
+  filterOptionActive: {
+    backgroundColor: COLORS.pinkybg,
+    borderColor: COLORS.primary,
+  },
+  filterOptionLast: {
+    marginBottom: 0,
+  },
+  filterIconContainer: {
+    width: RFValue(36),
+    height: RFValue(36),
+    borderRadius: RFValue(18),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  filterTextContainer: {
+    flex: 1,
+  },
+  filterLabel: {
+    fontSize: RFValue(11),
+    fontFamily: FONTS.fontFamilyBold,
+    color: COLORS.primary,
+    marginBottom: RFValue(1),
+  },
+  filterSubtitle: {
+    fontSize: RFValue(9),
+    fontFamily: FONTS.fontFamilyRegular,
+    color: '#999',
+  },
+  checkmarkContainer: {
+    width: RFValue(24),
+    height: RFValue(24),
+    borderRadius: RFValue(12),
+    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
