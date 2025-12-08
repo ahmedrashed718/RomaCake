@@ -45,7 +45,7 @@ export default function AppHeader({
                   style={[styles.headerIconButton, styles.backButton]}
                   onPress={onBackPress}
                   activeOpacity={0.8}>
-                  <Icon name="arrow-left" size={RFValue(20)} color="#E23D88" />
+                  <Icon name="arrow-left" size={RFValue(18)} color="#E23D88" />
                 </TouchableOpacity>
               )}
 
@@ -57,7 +57,7 @@ export default function AppHeader({
                   activeOpacity={0.8}>
                   <Icon
                     name="heart-outline"
-                    size={RFValue(20)}
+                    size={RFValue(18)}
                     color="#E23D88"
                   />
                 </TouchableOpacity>
@@ -69,7 +69,7 @@ export default function AppHeader({
                   style={[styles.headerIconButton, styles.searchButton]}
                   onPress={onSearchPress}
                   activeOpacity={0.8}>
-                  <Icon name="magnify" size={RFValue(20)} color="#6DC8D8" />
+                  <Icon name="magnify" size={RFValue(18)} color="#6DC8D8" />
                 </TouchableOpacity>
               )}
 
@@ -79,7 +79,7 @@ export default function AppHeader({
                   style={[styles.headerIconButton, styles.cartButton]}
                   onPress={onCartPress}
                   activeOpacity={0.8}>
-                  <Icon name="cart" size={RFValue(20)} color="#fff" />
+                  <Icon name="cart" size={RFValue(18)} color="#fff" />
                   {cartBadgeCount > 0 && (
                     <View style={styles.cartBadge}>
                       <Text style={styles.cartBadgeText}>{cartBadgeCount}</Text>
@@ -139,9 +139,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   headerIconButton: {
-    width: RFValue(40),
-    height: RFValue(40),
-    borderRadius: RFValue(20),
+    width: RFValue(36),
+    height: RFValue(36),
+    borderRadius: RFValue(18),
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',

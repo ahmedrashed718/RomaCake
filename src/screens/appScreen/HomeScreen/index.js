@@ -49,6 +49,7 @@ export default function HomeScreen() {
 
   const handleCategoryPress = category => {
     console.log('Category pressed:', category.title);
+    navigation.navigate('ProductsPage', {category});
   };
 
   const handleViewAllCategories = () => {
@@ -92,12 +93,12 @@ export default function HomeScreen() {
 
   const handleViewAllProducts = () => {
     console.log('View all products pressed');
-    navigation.navigate('CakeScreen');
+    navigation.navigate('CategoriesPage');
   };
 
   const handleViewAllOccasions = () => {
     console.log('View all occasions pressed');
-    // يمكنك هنا الانتقال إلى صفحة المناسبات
+    navigation.navigate('OccasionsPage');
   };
 
   // Auto scroll

@@ -8,8 +8,8 @@ import {
   ConnectWith,
   MyOrders,
   Profile,
+  Home,
 } from '../screens/appScreen';
-import HomeStack from './HomeStack';
 import {COLORS, icons, FONTS, SIZES, Images} from '../constants';
 
 const BottomTab = createBottomTabNavigator();
@@ -158,7 +158,7 @@ export default function BottomTabs() {
       {/* Middle Tab */}
       <BottomTab.Screen
         name={'Home'}
-        component={HomeStack}
+        component={Home}
         options={{
           tabBarLabel: 'الرئيسية',
           tabBarIcon: ({focused}) => (

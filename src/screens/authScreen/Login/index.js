@@ -15,8 +15,12 @@ import {FONTS, COLORS, SIZES} from '../../../constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from 'react-native-responsive-fontsize';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../../redux/reducers/UserReducer';
+import utils from '../../../utils';
 
 export default function LoginScreen({navigation}) {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -27,7 +31,8 @@ export default function LoginScreen({navigation}) {
   const handleLogin = () => {
     // Handle login logic here
     console.log('Login pressed');
-    navigation.navigate('BottomTabs');
+    // بدل navigation.navigate، استخدم Redux action
+    dispatch(setUser({email, /* باقي بيانات اليوزر */}));
   };
 
   return (
@@ -132,7 +137,7 @@ export default function LoginScreen({navigation}) {
             {/* Remember Me & Forgot Password */}
             <View style={styles.rememberRow}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ForgotPassword')}
+                onPress={() => utils.toastAlert('info', 'سيتم إضافة هذه الميزة قريباً')}
                 style={styles.forgotButton}>
                 <Text style={styles.forgotText}>نسيت كلمة المرور؟</Text>
               </TouchableOpacity>

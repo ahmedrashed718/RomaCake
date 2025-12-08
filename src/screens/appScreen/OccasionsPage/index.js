@@ -15,28 +15,27 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppHeader from '../../../components/AppHeader';
-import {CATEGORIES_DATA} from '../HomeScreen/testData';
+import {OCCASIONS_DATA} from '../HomeScreen/testData';
 import {useNavigation} from '@react-navigation/native';
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 const CARD_WIDTH = (SCREEN_WIDTH - 45) / 2;
 const HERO_HEIGHT = SCREEN_HEIGHT * 0.32;
+const OCCASION_CARD_WIDTH = CARD_WIDTH;
 
-export default function CategoriesPage() {
+export default function OccasionsPage() {
   const navigation = useNavigation();
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedOccasion, setSelectedOccasion] = useState(null);
 
-  // Create animated values for each category card
   const animatedValues = useRef(
-    CATEGORIES_DATA.map(() => ({
+    OCCASIONS_DATA.map(() => ({
       opacity: new Animated.Value(0),
       translateY: new Animated.Value(50),
       scale: new Animated.Value(0.8),
-    }))
+    })),
   ).current;
 
   useEffect(() => {
-    // Animate cards with staggered delay
     const animations = animatedValues.map((anim, index) => {
       return Animated.parallel([
         Animated.timing(anim.opacity, {
@@ -64,18 +63,16 @@ export default function CategoriesPage() {
     Animated.stagger(50, animations).start();
   }, [animatedValues]);
 
-  const handleCategoryPress = category => {
-    setSelectedCategory(category.id);
-    console.log('Category pressed:', category.title);
-    // الانتقال إلى صفحة المنتجات مع تمرير بيانات الفئة
-    navigation.navigate('ProductsPage', {category});
+  const handleOccasionPress = occasion => {
+    setSelectedOccasion(occasion.id);
+    // console.log('Occasion pressed:', occasion.title);
   };
 
   const handleBackPress = () => {
-    navigation.navigate('Home');
+    navigation.goBack();
   };
 
-  const renderCategoryCard = ({item, index}) => {
+  const renderOccasionCard = ({item, index}) => {
     const animatedStyle = {
       opacity: animatedValues[index].opacity,
       transform: [
@@ -85,33 +82,35 @@ export default function CategoriesPage() {
     };
 
     return (
-      <Animated.View style={animatedStyle}>
+      <Animated.View style={[styles.occasionCardWrapper, animatedStyle]}>
         <TouchableOpacity
           style={[
-            styles.categoryCard,
-            selectedCategory === item.id && styles.categoryCardSelected,
+            styles.occasionCard,
+            selectedOccasion === item.id && styles.occasionCardSelected,
           ]}
-          onPress={() => handleCategoryPress(item)}
+          onPress={() => handleOccasionPress(item)}
           activeOpacity={0.8}>
-          <View style={styles.categoryImageContainer}>
+          <View style={styles.occasionImageContainer}>
             <ImageBackground
-              source={Images.frame}
-              style={styles.categoryFrameImage}
-              imageStyle={styles.categoryFrameImageStyle}>
-              <View style={styles.categoryCircleInner}>
-                <ImageBackground
-                  source={item.image}
-                  style={styles.categoryImage}
-                  imageStyle={styles.categoryImageStyle}
-                />
-              </View>
+              source={item.image}
+              style={styles.occasionImage}
+              imageStyle={styles.occasionImageStyle}>
+              <LinearGradient
+                colors={[
+                  `${COLORS.secondary}40`,
+                  `${COLORS.secondary}30`,
+                  `${COLORS.primary}35`,
+                  `${COLORS.primary}50`,
+                ]}
+                style={styles.occasionGradient}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+              />
             </ImageBackground>
           </View>
-          <View style={styles.categoryTextContainer}>
-            <Text style={styles.categoryTitle} numberOfLines={2}>
-              {item.title}
-            </Text>
-          </View>
+          <Text style={styles.occasionTitle} numberOfLines={2}>
+            {item.title}
+          </Text>
         </TouchableOpacity>
       </Animated.View>
     );
@@ -120,7 +119,7 @@ export default function CategoriesPage() {
   return (
     <View style={styles.container}>
       <AppHeader
-        title="فئات الكيك"
+        title="المناسبات"
         showBackButton={true}
         onBackPress={handleBackPress}
       />
@@ -133,7 +132,7 @@ export default function CategoriesPage() {
           <View style={styles.heroSection}>
             <View style={styles.heroSlideContainer}>
               <ImageBackground
-                source={Images.CategpriesHero}
+                source={Images.heroOss}
                 style={styles.heroSlideBackground}
                 imageStyle={styles.heroSlideBackgroundImage}>
                 <LinearGradient
@@ -149,9 +148,9 @@ export default function CategoriesPage() {
                     <Text style={styles.heroMainTitle}>
                       حياتك بعالم روما كيك
                     </Text>
-                    <Text style={styles.heroSlideTitle}>كل صنف له طابع</Text>
+                    <Text style={styles.heroSlideTitle}>كل مناسبة لها طعم</Text>
                     <Text style={styles.heroSlideDescription}>
-                      طازج يوميًا ولمسات فنية على كيفك،
+                      من الفرح للذكرى، نصنع كل لحظة خاصة
                     </Text>
                   </View>
                 </LinearGradient>
@@ -174,22 +173,22 @@ export default function CategoriesPage() {
           </View>
         </View>
 
-        {/* Categories Grid */}
-        <View style={styles.categoriesContainer}>
+        {/* Occasions Grid */}
+        <View style={styles.occasionsContainer}>
           <View style={styles.sectionHeader}>
             <Icon
-              name="format-list-bulleted-square"
+              name="calendar-star"
               size={RFValue(20)}
               color={COLORS.primary}
             />
-            <Text style={styles.sectionTitle}>جميع الفئات</Text>
+            <Text style={styles.sectionTitle}>جميع المناسبات</Text>
           </View>
 
           <View style={styles.gridContainer}>
-            {CATEGORIES_DATA.map((item, index) => (
-              <View key={item.id} style={styles.categoryCardWrapper}>
-                {renderCategoryCard({item, index})}
-              </View>
+            {OCCASIONS_DATA.map((item, index) => (
+              <React.Fragment key={item.id}>
+                {renderOccasionCard({item, index})}
+              </React.Fragment>
             ))}
           </View>
         </View>
@@ -236,14 +235,12 @@ const styles = StyleSheet.create({
   },
   heroGradientOverlay: {
     flex: 1,
-    // justifyContent: 'flex-end',
     alignItems: 'flex-start',
     paddingTop: RFValue(20),
     paddingHorizontal: RFValue(10),
     paddingBottom: RFValue(20),
   },
   heroSlideContent: {
-    // alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
   },
@@ -251,7 +248,6 @@ const styles = StyleSheet.create({
     fontSize: RFValue(22),
     fontFamily: FONTS.funPlayBold,
     color: '#fff',
-    // textAlign: 'center',
     marginBottom: RFValue(5),
     textShadowColor: 'rgba(0, 0, 0, 0.7)',
     textShadowOffset: {width: 0, height: RFValue(3)},
@@ -262,7 +258,6 @@ const styles = StyleSheet.create({
     fontSize: RFValue(16),
     fontFamily: FONTS.funPlayBold,
     color: '#fff',
-    // textAlign: 'center',
     marginBottom: RFValue(8),
     textShadowColor: 'rgba(0, 0, 0, 0.6)',
     textShadowOffset: {width: 0, height: RFValue(2)},
@@ -272,9 +267,7 @@ const styles = StyleSheet.create({
     fontSize: RFValue(15),
     fontFamily: FONTS.fontFamilyRegular,
     color: '#fff',
-    // textAlign: 'center',
     marginBottom: RFValue(12),
-    // paddingHorizontal: RFValue(15),
     lineHeight: RFValue(20),
     width: '50%',
     textShadowColor: 'rgba(0, 0, 0, 0.6)',
@@ -293,15 +286,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: 'transparent',
   },
-  waveSvg: {
-    width: SCREEN_WIDTH,
-    height: RFValue(60),
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-  },
-  // Categories Section
-  categoriesContainer: {
+  // Occasions Section
+  occasionsContainer: {
     paddingHorizontal: RFValue(15),
   },
   sectionHeader: {
@@ -317,86 +303,54 @@ const styles = StyleSheet.create({
     fontSize: RFValue(18),
     fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
-    // marginTop: -10,
   },
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  categoryCardWrapper: {
-    width: CARD_WIDTH,
-    marginBottom: RFValue(15),
+  occasionCardWrapper: {
+    width: OCCASION_CARD_WIDTH,
+    marginBottom: RFValue(20),
   },
-  categoryCard: {
-    width: CARD_WIDTH,
-    backgroundColor: '#fff',
-    borderRadius: RFValue(15),
-    padding: RFValue(12),
+  occasionCard: {
+    width: OCCASION_CARD_WIDTH,
     alignItems: 'center',
+  },
+  occasionCardSelected: {
+    transform: [{scale: 0.98}],
+  },
+  occasionImageContainer: {
+    width: OCCASION_CARD_WIDTH,
+    height: OCCASION_CARD_WIDTH,
+    borderRadius: RFValue(15),
+    overflow: 'hidden',
+    backgroundColor: '#fff',
     shadowColor: COLORS.primary,
     shadowOffset: {
       width: 0,
-      height: RFValue(1),
+      height: RFValue(3),
     },
-    shadowOpacity: 0.08,
-    shadowRadius: RFValue(3),
-    elevation: RFValue(2),
-    borderWidth: RFValue(2),
-    borderColor: 'transparent',
-  },
-  categoryCardSelected: {
-    borderColor: COLORS.primary,
-    backgroundColor: '#FFF8F8',
-    transform: [{scale: 0.98}],
-  },
-  categoryImageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    shadowOpacity: 0.2,
+    shadowRadius: RFValue(6),
+    elevation: RFValue(5),
     marginBottom: RFValue(10),
   },
-  categoryFrameImage: {
-    width: CARD_WIDTH - 40,
-    height: CARD_WIDTH - 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  categoryFrameImageStyle: {
-    resizeMode: 'contain',
-  },
-  categoryCircleInner: {
-    width: CARD_WIDTH - 58,
-    height: CARD_WIDTH - 58,
-    borderRadius: (CARD_WIDTH - 58) / 2,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-    shadowColor: COLORS.secondary,
-    shadowOffset: {
-      width: 0,
-      height: RFValue(1),
-    },
-    shadowOpacity: 0.06,
-    shadowRadius: RFValue(2),
-    elevation: RFValue(1),
-  },
-  categoryImage: {
+  occasionImage: {
     width: '100%',
     height: '100%',
   },
-  categoryImageStyle: {
+  occasionImageStyle: {
     resizeMode: 'cover',
   },
-  categoryTextContainer: {
-    width: '100%',
-    alignItems: 'center',
-    minHeight: RFValue(32),
-    justifyContent: 'center',
+  occasionGradient: {
+    flex: 1,
   },
-  categoryTitle: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyBold,
+  occasionTitle: {
+    fontSize: RFValue(13),
+    fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
     textAlign: 'center',
-    lineHeight: RFValue(16),
+    maxWidth: OCCASION_CARD_WIDTH,
   },
 });

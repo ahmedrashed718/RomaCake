@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useSelector} from 'react-redux';
 import BottomTabs from './BottomTabs';
 import AuthStack from './AuthStack';
+import {CategoriesPage, OccasionsPage, ProductsPage} from '../screens/appScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,9 +16,24 @@ const AppStack = () => {
         headerShown: false,
         animation: 'slide_from_right',
       }}
-      initialRouteName="AuthStack">
-      <Stack.Screen name="AuthStack" component={AuthStack} />
-      <Stack.Screen name="BottomTabs" component={BottomTabs} />
+      initialRouteName={isLoggedIn ? "BottomTabs" : "AuthStack"}>
+      {!isLoggedIn ? (
+        <Stack.Screen name="AuthStack" component={AuthStack} />
+      ) : (
+        <>
+          <Stack.Screen 
+            name="BottomTabs" 
+            component={BottomTabs}
+            options={{
+              gestureEnabled: false,
+              headerLeft: null,
+            }}
+          />
+          <Stack.Screen name="CategoriesPage" component={CategoriesPage} />
+          <Stack.Screen name="OccasionsPage" component={OccasionsPage} />
+          <Stack.Screen name="ProductsPage" component={ProductsPage} />
+        </>
+      )}
     </Stack.Navigator>
   );
 };

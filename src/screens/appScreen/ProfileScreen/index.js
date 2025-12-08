@@ -14,9 +14,13 @@ import {FONTS, COLORS} from '../../../constants';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {removeUser} from '../../../redux/reducers/UserReducer';
+import Auth from '../../../Services';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const [activeTab, setActiveTab] = useState('profile');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -69,11 +73,13 @@ export default function ProfileScreen() {
     setShowLogoutModal(true);
   };
 
-  const confirmLogout = () => {
+  const confirmLogout = async () => {
     setShowLogoutModal(false);
-    // Logout logic here
-    navigation.navigate('AuthStack');
-    console.log('Logout');
+    // Clear auth data and update Redux state
+    await Auth.logout();
+    dispatch(removeUser());
+    console.log('Logout successful');
+    // The AppStack will automatically show AuthStack when login becomes false
   };
 
   const renderProfileContent = () => (
