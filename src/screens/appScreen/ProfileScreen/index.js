@@ -13,8 +13,11 @@ import {
 import {FONTS, COLORS} from '../../../constants';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useNavigation} from '@react-navigation/native';
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
+
   const [activeTab, setActiveTab] = useState('profile');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [userData, setUserData] = useState({
@@ -69,6 +72,7 @@ export default function ProfileScreen() {
   const confirmLogout = () => {
     setShowLogoutModal(false);
     // Logout logic here
+    navigation.navigate('AuthStack');
     console.log('Logout');
   };
 

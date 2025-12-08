@@ -111,6 +111,7 @@ export default function BottomTabs() {
     <BottomTab.Navigator
       initialRouteName={'Home'}
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarActiveTintColor: COLORS.white,
         tabBarInactiveTintColor: COLORS.white,
@@ -120,15 +121,16 @@ export default function BottomTabs() {
       }}>
       {/* Home Tab 1 */}
       <BottomTab.Screen
-        name={'Home'}
-        component={Home}
+        name={'CakeScreen'}
+        component={CakeScreen}
         options={{
-          tabBarLabel: 'الرئيسية',
+          tabBarLabel: 'الكيك',
           tabBarIcon: ({focused}) => (
-            <TabIcon focused={focused} icon={icons.home2} icon2={icons.home} />
+            <TabIcon focused={focused} icon={icons.Cake} icon2={icons.Cake2} />
           ),
         }}
       />
+
       {/* Home Tab 2 */}
       <BottomTab.Screen
         name={'MyOrders'}
@@ -147,12 +149,12 @@ export default function BottomTabs() {
 
       {/* Middle Tab */}
       <BottomTab.Screen
-        name={'CakeScreen'}
-        component={CakeScreen}
+        name={'Home'}
+        component={Home}
         options={{
-          tabBarLabel: 'الكيك',
+          tabBarLabel: 'الرئيسية',
           tabBarIcon: ({focused}) => (
-            <TabIcon focused={focused} icon={icons.Cake} icon2={icons.Cake2} />
+            <TabIcon focused={focused} icon={icons.home2} icon2={icons.home} />
           ),
         }}
       />

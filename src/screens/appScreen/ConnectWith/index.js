@@ -5,9 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Linking,
   TextInput,
-  Alert,
   Image,
 } from 'react-native';
 import {FONTS, COLORS, SIZES, Images} from '../../../constants';
@@ -24,6 +22,7 @@ export default function ConnectWith() {
     message: '',
   });
   const [showDropdown, setShowDropdown] = useState(false);
+  const [focusedInput, setFocusedInput] = useState(null);
 
   const messageTypes = [
     'استفسار عن الطلبات',
@@ -51,7 +50,7 @@ export default function ConnectWith() {
 
   return (
     <View style={styles.container}>
-      <AppHeader title="تواصل معنا" />
+      <AppHeader title="تواصل معنا" showIcons={true} />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}>
@@ -97,11 +96,16 @@ export default function ConnectWith() {
               الاسم الكامل <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                focusedInput === 'name' && styles.inputFocused,
+              ]}
               placeholder="اكتب اسمك هنا"
-              placeholderTextColor={COLORS.gray}
+              placeholderTextColor="#AAA"
               value={formData.name}
               onChangeText={text => setFormData({...formData, name: text})}
+              onFocus={() => setFocusedInput('name')}
+              onBlur={() => setFocusedInput(null)}
             />
           </View>
 
@@ -109,12 +113,17 @@ export default function ConnectWith() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>البريد الإلكتروني (اختياري)</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                focusedInput === 'email' && styles.inputFocused,
+              ]}
               placeholder="example@email.com"
-              placeholderTextColor={COLORS.gray}
+              placeholderTextColor="#AAA"
               value={formData.email}
               keyboardType="email-address"
               onChangeText={text => setFormData({...formData, email: text})}
+              onFocus={() => setFocusedInput('email')}
+              onBlur={() => setFocusedInput(null)}
             />
           </View>
 
@@ -124,13 +133,18 @@ export default function ConnectWith() {
               رقم الجوال <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                focusedInput === 'phone' && styles.inputFocused,
+              ]}
               placeholder="05xxxxxxxx"
-              placeholderTextColor={COLORS.gray}
+              placeholderTextColor="#AAA"
               value={formData.phone}
               keyboardType="phone-pad"
               maxLength={10}
               onChangeText={text => setFormData({...formData, phone: text})}
+              onFocus={() => setFocusedInput('phone')}
+              onBlur={() => setFocusedInput(null)}
             />
           </View>
 
@@ -170,14 +184,20 @@ export default function ConnectWith() {
               الرسالة <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
-              style={[styles.input, styles.textArea]}
+              style={[
+                styles.input,
+                styles.textArea,
+                focusedInput === 'message' && styles.inputFocused,
+              ]}
               placeholder="اكتب تفاصيل استفساراتك أو طلبك هنا..."
-              placeholderTextColor={COLORS.gray}
+              placeholderTextColor="#AAA"
               value={formData.message}
               multiline
               numberOfLines={5}
               textAlignVertical="top"
               onChangeText={text => setFormData({...formData, message: text})}
+              onFocus={() => setFocusedInput('message')}
+              onBlur={() => setFocusedInput(null)}
             />
           </View>
 
@@ -256,154 +276,217 @@ export default function ConnectWith() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF0F5',
+    backgroundColor: '#FFF5F9',
   },
   content: {
     padding: SIZES.padding - 8,
-    paddingBottom: RFValue(100),
+    paddingBottom: RFValue(80),
   },
   aboutCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 2,
-    marginTop: RFValue(15),
-    borderColor: COLORS.primary300,
-    ...COLORS.shadow,
+    borderRadius: 18,
+    padding: 20,
+    marginBottom: 18,
+    marginTop: RFValue(18),
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 105, 180, 0.08)',
   },
   aboutIconContainer: {
     alignItems: 'center',
     marginBottom: 10,
-    marginTop: -35,
+    marginTop: -38,
   },
   logo: {
-    width: RFValue(100),
-    height: RFValue(100),
+    width: RFValue(120),
+    height: RFValue(120),
     backgroundColor: COLORS.white,
-    borderRadius: RFValue(50),
-    borderWidth: 1,
-    // borderStyle: 'dotted',
+    borderRadius: RFValue(60),
+    borderWidth: 2.5,
     borderColor: COLORS.primary,
-    ...COLORS.shadow,
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   aboutTitle: {
-    fontSize: RFValue(22),
+    fontSize: RFValue(20),
     fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
     textAlign: 'center',
     marginBottom: 10,
+    letterSpacing: 0.3,
   },
   divider: {
-    width: '25%',
-    height: 2,
-    backgroundColor: COLORS.primary300,
+    width: '22%',
+    height: 2.5,
+    backgroundColor: COLORS.primary,
     alignSelf: 'center',
-    borderRadius: 2,
+    borderRadius: 8,
     marginBottom: 12,
+    opacity: 0.7,
   },
   aboutMainText: {
-    fontSize: RFValue(12),
+    fontSize: RFValue(14),
     fontFamily: FONTS.fontFamilyRegular,
-    color: COLORS.black,
+    color: COLORS.gray6,
     textAlign: 'center',
-    lineHeight: RFValue(22),
+    lineHeight: RFValue(20),
     marginBottom: 8,
   },
   formSection: {
     backgroundColor: COLORS.white,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: COLORS.primary300,
-    borderStyle: 'dashed',
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 18,
+    shadowColor: '#FF69B4',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 105, 180, 0.12)',
   },
   sectionTitle: {
-    fontSize: RFValue(22),
+    fontSize: RFValue(18),
     fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 18,
+    letterSpacing: 0.2,
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 14,
   },
   label: {
-    fontSize: RFValue(14),
+    fontSize: RFValue(13),
     fontFamily: FONTS.fontFamilySemiBold,
     color: COLORS.primary,
-    marginBottom: 8,
-    // textAlign: 'right',
+    marginBottom: 7,
   },
   required: {
-    color: COLORS.error,
+    color: '#FF6B6B',
+    fontSize: RFValue(14),
   },
   input: {
-    backgroundColor: COLORS.lightGray4,
+    backgroundColor: '#FAFAFA',
     borderRadius: 12,
-    padding: 14,
-    fontSize: RFValue(14),
+    padding: 12,
+    fontSize: RFValue(13),
     fontFamily: FONTS.fontFamilyRegular,
-    color: COLORS.darkGray,
-    // textAlign: 'right',
-    borderWidth: 1,
-    borderColor: COLORS.gray3,
+    color: '#333',
+    borderWidth: 1.5,
+    borderColor: '#E8E8E8',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  inputFocused: {
+    borderColor: COLORS.primary,
+    backgroundColor: '#FFFFFF',
+    shadowColor: COLORS.primary,
+    shadowOpacity: 0.12,
+    shadowRadius: 5,
+    elevation: 3,
   },
   textArea: {
-    height: 120,
-    paddingTop: 14,
+    height: 110,
+    paddingTop: 12,
+    textAlignVertical: 'top',
   },
   dropdown: {
-    backgroundColor: COLORS.lightGray4,
+    backgroundColor: '#FAFAFA',
     borderRadius: 12,
-    padding: 14,
+    padding: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.gray3,
+    borderWidth: 1.5,
+    borderColor: '#E8E8E8',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   dropdownText: {
-    fontSize: RFValue(14),
+    fontSize: RFValue(13),
     fontFamily: FONTS.fontFamilyRegular,
-    color: COLORS.darkGray,
+    color: '#333',
   },
   dropdownList: {
     backgroundColor: COLORS.white,
     borderRadius: 12,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: COLORS.gray3,
-    ...COLORS.shadow,
+    marginTop: 5,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary300,
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 4,
+    overflow: 'hidden',
   },
   dropdownItem: {
-    padding: 14,
+    padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray3,
+    borderBottomColor: '#F5F5F5',
+    backgroundColor: COLORS.white,
   },
   dropdownItemText: {
-    fontSize: RFValue(14),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: COLORS.darkGray,
-    // textAlign: 'right',
-  },
-  note: {
     fontSize: RFValue(13),
     fontFamily: FONTS.fontFamilyRegular,
-    color: COLORS.darkGray,
-    textAlign: 'center',
-    marginTop: 10,
-    lineHeight: RFValue(22),
+    color: '#333',
   },
-  workingHours: {
+  note: {
     fontSize: RFValue(12),
     fontFamily: FONTS.fontFamilyRegular,
-    color: COLORS.darkGray2,
+    color: '#666',
     textAlign: 'center',
-    marginTop: 12,
-    marginBottom: 20,
-    lineHeight: RFValue(20),
+    marginTop: 8,
+    lineHeight: RFValue(18),
+    backgroundColor: '#FFF9FC',
+    padding: 9,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 105, 180, 0.08)',
+  },
+  workingHours: {
+    fontSize: RFValue(11),
+    fontFamily: FONTS.fontFamilyRegular,
+    color: '#777',
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 18,
+    lineHeight: RFValue(17),
+    backgroundColor: '#F8F8F8',
+    padding: 9,
+    borderRadius: 9,
   },
   highlight: {
     color: COLORS.primary,
@@ -411,70 +494,95 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: COLORS.primary,
-    borderRadius: 25,
-    padding: 10,
+    borderRadius: 22,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
     alignItems: 'center',
-    ...COLORS.shadow,
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 5,
   },
   submitButtonText: {
     fontSize: RFValue(14),
     fontFamily: FONTS.funPlayBold,
     color: COLORS.white,
+    letterSpacing: 0.2,
   },
   contactCards: {
-    marginTop: 10,
+    marginTop: 6,
   },
   contactCard: {
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 2,
-    borderStyle: 'dashed',
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 5,
+    borderWidth: 1,
   },
   cardPink: {
-    backgroundColor: '#FFF5F8',
-    borderColor: COLORS.primary300,
+    backgroundColor: '#FFF8FB',
+    borderColor: 'rgba(255, 105, 180, 0.15)',
   },
   cardCyan: {
-    backgroundColor: '#F0FCFF',
-    borderColor: COLORS.secondary300,
+    backgroundColor: '#F5FDFF',
+    borderColor: 'rgba(37, 211, 102, 0.15)',
   },
   cardTitle: {
-    fontSize: RFValue(20),
+    fontSize: RFValue(17.5),
     fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
+    letterSpacing: 0.2,
   },
   phoneRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    padding: 9,
+    borderRadius: 12,
   },
   phoneNumber: {
-    fontSize: RFValue(18),
+    fontSize: RFValue(15.5),
     fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.darkGray,
-    marginLeft: 8,
+    color: '#333',
+    marginLeft: 7,
+    letterSpacing: 0.6,
   },
   emailRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    padding: 9,
+    borderRadius: 12,
   },
   emailText: {
-    fontSize: RFValue(16),
+    fontSize: RFValue(13.5),
     fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.darkGray,
-    marginLeft: 8,
+    color: '#333',
+    marginLeft: 7,
   },
   cardDescription: {
-    fontSize: RFValue(12),
+    fontSize: RFValue(11),
     fontFamily: FONTS.fontFamilyRegular,
-    color: COLORS.darkGray2,
+    color: '#666',
     textAlign: 'center',
-    lineHeight: RFValue(20),
+    lineHeight: RFValue(18),
+    paddingHorizontal: 2,
   },
 });

@@ -5,105 +5,186 @@ import {
   StyleSheet,
   TouchableOpacity,
   StatusBar,
-  Platform,
 } from 'react-native';
-import {FONTS, COLORS, SIZES, IS_IOS} from '../../constants';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {FONTS, COLORS} from '../../constants';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {
-  getStatusBarHeight,
-  isIphoneX,
-} from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function AppHeader({
   title = 'Roma Cake',
   showBackButton = false,
   onBackPress,
-  backgroundColor = COLORS.primary,
-  textColor = COLORS.white,
-  rightIcon,
-  onRightPress,
+  showCart = false,
+  onCartPress,
+  showFavorite = false,
+  onFavoritePress,
+  showSearch = false,
+  onSearchPress,
+  cartBadgeCount = 0,
 }) {
   return (
     <>
       <StatusBar
-        backgroundColor={backgroundColor}
+        backgroundColor={COLORS.primary}
         barStyle="light-content"
         translucent={false}
       />
-      <View style={[styles.container, {backgroundColor}]}>
-        {/* Left Side - Back Button or Empty Space */}
-        {showBackButton ? (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onBackPress}
-            activeOpacity={0.7}>
-            <Icon name="arrow-right" size={RFValue(22)} color={textColor} />
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.iconButton} />
-        )}
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <View style={styles.headerContainer}>
+          <View style={styles.homeHeader}>
+            {/* Right Side - Title */}
+            <Text style={styles.homeTitle}>{title}</Text>
 
-        {/* Center - Title */}
-        <View style={styles.titleContainer}>
-          <Text style={[styles.title, {color: textColor}]} numberOfLines={1}>
-            {title}
-          </Text>
+            {/* Left Side - Icons */}
+            <View style={styles.headerIconsContainer}>
+              {/* Back Button */}
+              {showBackButton && (
+                <TouchableOpacity
+                  style={[styles.headerIconButton, styles.backButton]}
+                  onPress={onBackPress}
+                  activeOpacity={0.8}>
+                  <Icon name="arrow-right" size={RFValue(20)} color="#E23D88" />
+                </TouchableOpacity>
+              )}
+
+              {/* Favorite Button */}
+              {showFavorite && (
+                <TouchableOpacity
+                  style={[styles.headerIconButton, styles.favoriteButton]}
+                  onPress={onFavoritePress}
+                  activeOpacity={0.8}>
+                  <Icon
+                    name="heart-outline"
+                    size={RFValue(20)}
+                    color="#E23D88"
+                  />
+                </TouchableOpacity>
+              )}
+
+              {/* Search Button */}
+              {showSearch && (
+                <TouchableOpacity
+                  style={[styles.headerIconButton, styles.searchButton]}
+                  onPress={onSearchPress}
+                  activeOpacity={0.8}>
+                  <Icon name="magnify" size={RFValue(20)} color="#6DC8D8" />
+                </TouchableOpacity>
+              )}
+
+              {/* Cart Button */}
+              {showCart && (
+                <TouchableOpacity
+                  style={[styles.headerIconButton, styles.cartButton]}
+                  onPress={onCartPress}
+                  activeOpacity={0.8}>
+                  <Icon name="cart" size={RFValue(20)} color="#fff" />
+                  {cartBadgeCount > 0 && (
+                    <View style={styles.cartBadge}>
+                      <Text style={styles.cartBadgeText}>{cartBadgeCount}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+          {/* Gradient Border */}
+          <LinearGradient
+            colors={[COLORS.primary, COLORS.secondary]}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.gradientBorder}
+          />
         </View>
-
-        {/* Right Side - Custom Icon or Empty Space */}
-        {rightIcon ? (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={onRightPress}
-            activeOpacity={0.7}>
-            <Icon name={rightIcon} size={RFValue(22)} color={textColor} />
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.iconButton} />
-        )}
-      </View>
+      </SafeAreaView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  // Safe Area
+  safeArea: {
+    backgroundColor: COLORS.primary,
+  },
+  // Header Styles
+  headerContainer: {
+    backgroundColor: '#fff',
+  },
+  homeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  gradientBorder: {
+    height: 3,
+    width: '100%',
+  },
+  homeTitle: {
+    fontSize: RFValue(20),
+    fontFamily: FONTS.funPlayBold,
+    color: COLORS.primary,
+  },
+  headerIconsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SIZES.padding - 8,
-    paddingTop: Platform.OS === 'ios' ? getStatusBarHeight() + 10 : 15,
-    paddingBottom: 15,
-    elevation: 8,
-    shadowColor: COLORS.black,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    gap: 10,
   },
-  iconButton: {
+  headerIconButton: {
     width: RFValue(40),
     height: RFValue(40),
-    justifyContent: 'center',
-    alignItems: 'center',
     borderRadius: RFValue(20),
-  },
-  titleContainer: {
-    flex: 1,
-    marginHorizontal: 10,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
   },
-  title: {
-    fontSize: RFValue(20),
+  backButton: {
+    backgroundColor: '#FFF0F5',
+    borderColor: 'rgba(226, 61, 136, 0.15)',
+  },
+  favoriteButton: {
+    backgroundColor: '#FFF0F5',
+    borderColor: 'rgba(226, 61, 136, 0.15)',
+  },
+  searchButton: {
+    backgroundColor: '#F0F8FA',
+    borderColor: 'rgba(109, 200, 216, 0.15)',
+  },
+  cartButton: {
+    backgroundColor: '#E23D88',
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#6DC8D8',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  cartBadgeText: {
+    fontSize: RFValue(10),
     fontFamily: FONTS.fontFamilyBold,
-    textAlign: 'center',
-    letterSpacing: 0.5,
+    color: '#fff',
   },
 });
-
