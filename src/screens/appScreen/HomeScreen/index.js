@@ -14,155 +14,33 @@ import {RFValue} from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import AppHeader from '../../../components/AppHeader';
+import {
+  SLIDER_DATA,
+  CATEGORIES_DATA,
+  OCCASIONS_DATA,
+  PRODUCTS_DATA,
+  PROMISES_DATA,
+} from './testData';
+import {useNavigation} from '@react-navigation/native';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 const SLIDER_WIDTH = SCREEN_WIDTH;
 const SLIDER_HEIGHT = RFValue(180);
 const CATEGORY_CARD_WIDTH = (SCREEN_WIDTH - 35) / 3;
 const OCCASION_CARD_WIDTH = (SCREEN_WIDTH - 60) / 3;
-
-const SLIDER_DATA = [
-  {
-    id: '1',
-    title: 'صمم كيكك على ذوقك',
-    description:
-      'من الذكرى للتصميم... كل تفصيلة على كيفك، نزين الفرح ما يكمل إلا بلمستك الخاصة',
-    buttonText: 'اطلب الآن',
-    gradient: ['rgba(255, 105, 180, 0.2)', 'rgba(255, 182, 193, 0.2)'],
-    image: Images.banner1,
-  },
-  {
-    id: '2',
-    title: 'كيك لجميع المناسبات 🎉',
-    description:
-      'أعياد ميلاد، أفراح، تخرج... نصنع لك كيك خاص يناسب كل مناسبة سعيدة',
-    buttonText: 'اكتشف المزيد',
-    gradient: ['rgba(138, 43, 226, 0.2)', 'rgba(186, 85, 211, 0.2)'],
-    image: Images.banner2,
-  },
-  {
-    id: '3',
-    title: 'جودة عالية وطعم لذيذ 🍰',
-    description: 'نستخدم أفضل المكونات لنقدم لك كيك طازج وشهي يسعد قلبك',
-    buttonText: 'تصفح القائمة',
-    gradient: ['rgba(255, 140, 0, 0.2)', 'rgba(255, 165, 0, 0.2)'],
-    image: Images.banner3,
-  },
-];
-
-const CATEGORIES_DATA = [
-  {
-    id: '2',
-    title: 'كيك كريمة أبيض',
-    image: Images.cat2,
-  },
-  {
-    id: '3',
-    title: 'برج من الكيك (الصغير)',
-    image: Images.cat3,
-  },
-  {
-    id: '4',
-    title: 'كيك حفلتي',
-    image: Images.cat4,
-  },
-  {
-    id: '5',
-    title: 'كيك مزيون بالورد',
-    image: Images.cat5,
-  },
-  {
-    id: '6',
-    title: 'حلاوي مغلفة بشكل مخروط',
-    image: Images.cat6,
-  },
-  {
-    id: '7',
-    title: 'كيك راقي',
-    image: Images.cat7,
-  },
-  {
-    id: '8',
-    title: 'Happy Birthday',
-    image: Images.cat8,
-  },
-  {
-    id: '9',
-    title: 'كاسات حلاويات بطبقات',
-    image: Images.cat9,
-  },
-  {
-    id: '10',
-    title: 'كيك شموع',
-    image: Images.cat10,
-  },
-  {
-    id: '11',
-    title: 'كب كيك',
-    image: Images.cat11,
-  },
-  {
-    id: '12',
-    title: 'ألواح شوكولاتة',
-    image: Images.cat12,
-  },
-  {
-    id: '13',
-    title: 'حلى أكواب',
-    image: Images.cat13,
-  },
-  {
-    id: '14',
-    title: 'كيك مميز',
-    image: Images.cat14,
-  },
-  {
-    id: '15',
-    title: 'دونتس',
-    image: Images.cat15,
-  },
-  {
-    id: '16',
-    title: 'سينابون',
-    image: Images.cat16,
-  },
-];
-
-const OCCASIONS_DATA = [
-  {
-    id: '1',
-    title: 'مواليد',
-    image: Images.cake1,
-  },
-  {
-    id: '2',
-    title: 'حفلات تخريج',
-    image: Images.cake2,
-  },
-  {
-    id: '3',
-    title: 'زفاف',
-    image: Images.cake3,
-  },
-  {
-    id: '4',
-    title: 'أعياد',
-    image: Images.cake4,
-  },
-  {
-    id: '5',
-    title: 'العيد الوطني',
-    image: Images.cake6,
-  },
-];
+const PRODUCT_CARD_WIDTH = (SCREEN_WIDTH - 55) / 2;
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [categoryIndex, setCategoryIndex] = useState(0);
   const [occasionIndex, setOccasionIndex] = useState(0);
+  const [productIndex, setProductIndex] = useState(0);
+  const [products, setProducts] = useState(PRODUCTS_DATA);
   const flatListRef = useRef(null);
   const categoryListRef = useRef(null);
   const occasionListRef = useRef(null);
+  const productListRef = useRef(null);
   const autoScrollTimer = useRef(null);
 
   const handleOrderPress = () => {
@@ -171,6 +49,11 @@ export default function HomeScreen() {
 
   const handleCategoryPress = category => {
     console.log('Category pressed:', category.title);
+  };
+
+  const handleViewAllCategories = () => {
+    console.log('View all categories pressed');
+    navigation.navigate('CategoriesPage');
   };
 
   const handleOccasionPress = occasion => {
@@ -187,6 +70,34 @@ export default function HomeScreen() {
 
   const handleSearchPress = () => {
     console.log('Search pressed');
+  };
+
+  const handleProductPress = product => {
+    console.log('Product pressed:', product.title);
+  };
+
+  const handleToggleFavorite = productId => {
+    setProducts(prevProducts =>
+      prevProducts.map(product =>
+        product.id === productId
+          ? {...product, isFavorite: !product.isFavorite}
+          : product,
+      ),
+    );
+  };
+
+  const handleAddToCart = product => {
+    console.log('Add to cart:', product.title);
+  };
+
+  const handleViewAllProducts = () => {
+    console.log('View all products pressed');
+    navigation.navigate('CakeScreen');
+  };
+
+  const handleViewAllOccasions = () => {
+    console.log('View all occasions pressed');
+    // يمكنك هنا الانتقال إلى صفحة المناسبات
   };
 
   // Auto scroll
@@ -300,6 +211,38 @@ export default function HomeScreen() {
     itemVisiblePercentThreshold: 50,
   }).current;
 
+  const scrollProductToNext = () => {
+    if (productIndex < products.length - 2) {
+      const nextIndex = productIndex + 1;
+      productListRef.current?.scrollToIndex({
+        index: nextIndex,
+        animated: true,
+      });
+      setProductIndex(nextIndex);
+    }
+  };
+
+  const scrollProductToPrev = () => {
+    if (productIndex > 0) {
+      const prevIndex = productIndex - 1;
+      productListRef.current?.scrollToIndex({
+        index: prevIndex,
+        animated: true,
+      });
+      setProductIndex(prevIndex);
+    }
+  };
+
+  const onProductViewableItemsChanged = useRef(({viewableItems}) => {
+    if (viewableItems.length > 0) {
+      setProductIndex(viewableItems[0].index || 0);
+    }
+  }).current;
+
+  const productViewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+  }).current;
+
   const renderSliderItem = ({item}) => (
     <View style={styles.slideContainer}>
       <ImageBackground
@@ -377,6 +320,65 @@ export default function HomeScreen() {
     </TouchableOpacity>
   );
 
+  const renderProductItem = ({item}) => (
+    <View style={styles.productCard}>
+      <TouchableOpacity
+        onPress={() => handleProductPress(item)}
+        activeOpacity={0.9}>
+        <View style={styles.productImageContainer}>
+          <ImageBackground
+            source={item.image}
+            style={styles.productImage}
+            imageStyle={styles.productImageStyle}
+          />
+          {item.isNew && (
+            <View style={styles.newBadge}>
+              <Icon name="star-four-points" size={RFValue(7)} color="#fff" />
+              <Text style={styles.newBadgeText}>جديد</Text>
+            </View>
+          )}
+          <TouchableOpacity
+            style={[
+              styles.favoriteButton,
+              item.isFavorite && styles.favoriteButtonActive,
+            ]}
+            onPress={() => handleToggleFavorite(item.id)}
+            activeOpacity={0.8}>
+            <Icon
+              name={item.isFavorite ? 'heart' : 'heart-outline'}
+              size={RFValue(16)}
+              color={item.isFavorite ? '#fff' : COLORS.primary}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.productInfo}>
+          <Text style={styles.productTitle} numberOfLines={2}>
+            {item.title}
+          </Text>
+          {/* <Text style={styles.productSubtitle} numberOfLines={1}>
+            {item.subtitle}
+          </Text> */}
+          <View style={styles.ratingContainer}>
+            <Text style={styles.ratingText}>{item.rating}</Text>
+            <Icon name="star" size={RFValue(10)} color="#FFD700" />
+            <Text style={styles.reviewsText}>({item.reviews} تقييم)</Text>
+          </View>
+          <View style={styles.priceContainer}>
+            <Text style={styles.priceValue}>{item.price}</Text>
+            <Text style={styles.priceLabel}>ر.س</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.addToCartButton}
+        onPress={() => handleAddToCart(item)}
+        activeOpacity={0.8}>
+        <Icon name="cart-outline" size={RFValue(13)} color="#fff" />
+        <Text style={styles.addToCartText}>أضف إلى السلة</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <AppHeader
@@ -442,10 +444,30 @@ export default function HomeScreen() {
 
         {/* Categories Section */}
         <View style={styles.categoriesSection}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>فئات الكيك</Text>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Text style={styles.seeAllText}>عرض الكل</Text>
+          <View style={styles.categoryHeaderContainer}>
+            <View style={styles.categoryTitleWrapper}>
+              <Text style={styles.categoryMainTitle}>فئات الكيك</Text>
+              <Text style={styles.categorySubTitle}>
+                اختار النكهة اللي تناسب ذوقك!
+              </Text>
+            </View>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleViewAllCategories}>
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.secondary]}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                style={styles.viewAllCategoryButtonGradient}>
+                <View style={styles.viewAllCategoryButtonInner}>
+                  <Text style={styles.viewAllCategoryText}>عرض الكل</Text>
+                  <Icon
+                    name="arrow-left"
+                    size={RFValue(12)}
+                    color={COLORS.primary}
+                  />
+                </View>
+              </LinearGradient>
             </TouchableOpacity>
           </View>
           <View style={styles.categorySliderContainer}>
@@ -490,8 +512,28 @@ export default function HomeScreen() {
         {/* Occasions Section */}
         <View style={styles.occasionsSection}>
           <View style={styles.occasionHeaderContainer}>
-            <Text style={styles.occasionMainTitle}>وش المناسبة؟</Text>
-            <Text style={styles.occasionSubTitle}>كل كيكة تحكي لحظاتها!</Text>
+            <View style={styles.occasionTitleWrapper}>
+              <Text style={styles.occasionMainTitle}>وش المناسبة؟</Text>
+              <Text style={styles.occasionSubTitle}>كل كيكة تحكي لحظاتها!</Text>
+            </View>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleViewAllOccasions}>
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.secondary]}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                style={styles.viewAllOccasionButtonGradient}>
+                <View style={styles.viewAllOccasionButtonInner}>
+                  <Text style={styles.viewAllOccasionText}>عرض الكل</Text>
+                  <Icon
+                    name="arrow-left"
+                    size={RFValue(12)}
+                    color={COLORS.primary}
+                  />
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.occasionSliderContainer}>
@@ -546,6 +588,95 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* Products Section */}
+        <View style={styles.productsSection}>
+          <View style={styles.productHeaderContainer}>
+            <Text style={styles.productMainTitle}>أحدث المنتجات</Text>
+            <View style={styles.productNavButtons}>
+              {productIndex > 0 && (
+                <TouchableOpacity
+                  style={styles.productHeaderNavButton}
+                  onPress={scrollProductToPrev}
+                  activeOpacity={0.7}>
+                  <Icon
+                    name="chevron-right"
+                    size={RFValue(18)}
+                    color={COLORS.primary}
+                  />
+                </TouchableOpacity>
+              )}
+              {productIndex < products.length - 2 && (
+                <TouchableOpacity
+                  style={styles.productHeaderNavButton}
+                  onPress={scrollProductToNext}
+                  activeOpacity={0.7}>
+                  <Icon
+                    name="chevron-left"
+                    size={RFValue(18)}
+                    color={COLORS.primary}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
+          <FlatList
+            ref={productListRef}
+            data={products}
+            renderItem={renderProductItem}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.productsGrid}
+            snapToInterval={PRODUCT_CARD_WIDTH + 10}
+            decelerationRate="fast"
+            onViewableItemsChanged={onProductViewableItemsChanged}
+            viewabilityConfig={productViewabilityConfig}
+          />
+
+          {/* View All Button */}
+          <TouchableOpacity
+            onPress={handleViewAllProducts}
+            activeOpacity={0.8}>
+            <LinearGradient
+              colors={[COLORS.primary, COLORS.secondary]}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              style={styles.viewAllButton}>
+              <Text style={styles.viewAllButtonText}>عرض المزيد</Text>
+              <Icon name="arrow-left" size={RFValue(14)} color="#fff" />
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        {/* Promises Section */}
+        <View style={styles.promisesSection}>
+          <View style={styles.promiseHeaderContainer}>
+            <Text style={styles.promiseMainTitle}>وعدنا لكم</Text>
+            <Text style={styles.promiseSubTitle}>
+              ما فيه سحر ولا تعويذة...بس شغل صادق وتعب من القلب!
+            </Text>
+          </View>
+
+          <View style={styles.promisesGrid}>
+            {PROMISES_DATA.map(item => (
+              <View key={item.id} style={styles.promiseCard}>
+                <View style={styles.promiseIconContainer}>
+                  <ImageBackground
+                    source={item.image}
+                    style={styles.promiseIcon}
+                    imageStyle={styles.promiseIconImageStyle}
+                  />
+                </View>
+                <Text style={styles.promiseTitle}>{item.title}</Text>
+                <Text style={styles.promiseDescription}>
+                  {item.description}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
         {/* Other content sections */}
         <View style={styles.contentSection}>
           {/* Additional sections can go here */}
@@ -558,11 +689,11 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF5F9',
+    backgroundColor: COLORS.pinkybg,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#FFF5F9',
+    backgroundColor: COLORS.pinkybg,
   },
   // Slider Styles
   sliderSection: {
@@ -712,26 +843,55 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 15,
   },
-  sectionHeader: {
+  categoryHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
     paddingHorizontal: 15,
   },
-  categorySliderContainer: {
-    position: 'relative',
+  categoryTitleWrapper: {
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: RFValue(18),
+  categoryMainTitle: {
+    fontSize: RFValue(20),
     fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
   },
-  seeAllText: {
-    fontSize: RFValue(14),
-    fontFamily: FONTS.fontFamilyMedium,
+  categorySubTitle: {
+    fontSize: RFValue(10),
+    fontFamily: FONTS.fontFamilyLight,
+    color: COLORS.lightGray7,
+    marginTop: 2,
+  },
+  categorySliderContainer: {
+    position: 'relative',
+  },
+  viewAllCategoryButtonGradient: {
+    borderRadius: 20,
+    padding: 1.5,
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  viewAllCategoryButtonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 19,
+    gap: 4,
+  },
+  viewAllCategoryText: {
+    fontSize: RFValue(11),
+    fontFamily: FONTS.fontFamilyBold,
     color: COLORS.primary,
-    textDecorationLine: 'underline',
   },
   categoriesGrid: {
     paddingLeft: 12,
@@ -825,27 +985,54 @@ const styles = StyleSheet.create({
   occasionsSection: {
     paddingTop: 10,
     paddingBottom: 20,
-    backgroundColor: '#FFF5F9',
+    backgroundColor: COLORS.pinkybg,
   },
   occasionHeaderContainer: {
-    alignItems: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 15,
+  },
+  occasionTitleWrapper: {
+    flex: 1,
   },
   occasionMainTitle: {
     fontSize: RFValue(20),
     fontFamily: FONTS.funPlayBold,
     color: COLORS.primary,
-    textAlign: 'center',
-    marginBottom: 5,
   },
   occasionSubTitle: {
-    fontSize: RFValue(13),
-    fontFamily: FONTS.fontFamilyMedium,
+    fontSize: RFValue(10),
+    fontFamily: FONTS.fontFamilyLight,
+    color: COLORS.lightGray7,
+    marginTop: 2,
+  },
+  viewAllOccasionButtonGradient: {
+    borderRadius: 20,
+    padding: 1.5,
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  viewAllOccasionButtonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 19,
+    gap: 4,
+  },
+  viewAllOccasionText: {
+    fontSize: RFValue(11),
+    fontFamily: FONTS.fontFamilyBold,
     color: COLORS.primary,
-    textAlign: 'right',
   },
   occasionSliderContainer: {
     position: 'relative',
@@ -943,9 +1130,288 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3,
   },
+  // Products Section
+  productsSection: {
+    paddingTop: 20,
+    paddingBottom: 25,
+    backgroundColor: COLORS.pinkybg,
+  },
+  productHeaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  productMainTitle: {
+    fontSize: RFValue(20),
+    fontFamily: FONTS.funPlayBold,
+    color: COLORS.primary,
+  },
+  productNavButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  productHeaderNavButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: COLORS.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  productsGrid: {
+    paddingLeft: 15,
+    paddingRight: 10,
+  },
+  productCard: {
+    width: PRODUCT_CARD_WIDTH,
+    backgroundColor: '#fff',
+    borderRadius: RFValue(12),
+    marginRight: 10,
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 5,
+    elevation: 4,
+    overflow: 'hidden',
+    marginBottom: 10,
+  },
+  productImageContainer: {
+    width: '100%',
+    height: PRODUCT_CARD_WIDTH * 0.95,
+    position: 'relative',
+  },
+  productImage: {
+    width: '100%',
+    height: '100%',
+  },
+  productImageStyle: {
+    resizeMode: 'cover',
+  },
+  newBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 3,
+  },
+  newBadgeText: {
+    fontSize: RFValue(9),
+    fontFamily: FONTS.fontFamilyBold,
+    color: '#fff',
+  },
+  favoriteButton: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  favoriteButtonActive: {
+    backgroundColor: COLORS.primary,
+  },
+  productInfo: {
+    padding: 10,
+    paddingBottom: 8,
+  },
+  productTitle: {
+    fontSize: RFValue(11),
+    fontFamily: FONTS.fontFamilyBold,
+    color: COLORS.primary,
+    marginBottom: 2,
+  },
+  productSubtitle: {
+    fontSize: RFValue(10),
+    fontFamily: FONTS.fontFamilyRegular,
+    color: '#666',
+    marginBottom: 5,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    gap: 2,
+  },
+  ratingText: {
+    fontSize: RFValue(10),
+    fontFamily: FONTS.fontFamilyBold,
+    color: '#333',
+  },
+  reviewsText: {
+    fontSize: RFValue(8),
+    fontFamily: FONTS.fontFamilyRegular,
+    color: '#999',
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF8DC',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    gap: 3,
+  },
+  priceLabel: {
+    fontSize: RFValue(9),
+    fontFamily: FONTS.fontFamilyMedium,
+    color: COLORS.primary,
+  },
+  priceValue: {
+    fontSize: RFValue(13),
+    fontFamily: FONTS.fontFamilyBold,
+    color: COLORS.primary,
+  },
+  addToCartButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.secondary,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 5,
+  },
+  addToCartText: {
+    fontSize: RFValue(11),
+    fontFamily: FONTS.fontFamilyBold,
+    color: '#fff',
+  },
+  viewAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 'auto',
+    marginTop: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    gap: 8,
+    alignSelf: 'center',
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  viewAllButtonText: {
+    fontSize: RFValue(13),
+    fontFamily: FONTS.fontFamilyBold,
+    color: '#fff',
+  },
+  // Promises Section
+  promisesSection: {
+    paddingTop: 20,
+    paddingBottom: 30,
+    backgroundColor: '#FFF8F8',
+    marginTop: 10,
+  },
+  promiseHeaderContainer: {
+    alignItems: 'center',
+    marginBottom: 25,
+    paddingHorizontal: 20,
+  },
+  promiseMainTitle: {
+    fontSize: RFValue(22),
+    fontFamily: FONTS.funPlayBold,
+    color: '#D63854',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  promiseSubTitle: {
+    fontSize: RFValue(12),
+    fontFamily: FONTS.fontFamilyRegular,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: RFValue(18),
+  },
+  promisesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 15,
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  promiseCard: {
+    width: (SCREEN_WIDTH - 42) / 2,
+    minHeight: RFValue(185),
+    backgroundColor: '#fff',
+    borderRadius: RFValue(15),
+    paddingVertical: 18,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: COLORS.primary,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  promiseIconContainer: {
+    width: RFValue(65),
+    height: RFValue(65),
+    marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  promiseIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  promiseIconImageStyle: {
+    resizeMode: 'contain',
+  },
+  promiseTitle: {
+    fontSize: RFValue(14),
+    fontFamily: FONTS.fontFamilyBold,
+    color: COLORS.primary,
+    textAlign: 'center',
+    marginBottom: 8,
+    minHeight: RFValue(32),
+    lineHeight: RFValue(16),
+  },
+  promiseDescription: {
+    fontSize: RFValue(10),
+    fontFamily: FONTS.fontFamilyRegular,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: RFValue(14),
+    minHeight: RFValue(42),
+  },
   // Content Section
   contentSection: {
     padding: 20,
     paddingTop: 10,
+    paddingBottom: 80,
   },
 });

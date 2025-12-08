@@ -27,6 +27,12 @@ const cake3 = require('../assets/images/cake3.png');
 const cake4 = require('../assets/images/cake4.png');
 const cake5 = require('../assets/images/fistivals.png');
 const cake6 = require('../assets/images/fistivals.png');
+const promise1 = require('../assets/images/promise-baked_0.webp');
+const promise2 = require('../assets/images/promise-design_0.webp');
+const promise3 = require('../assets/images/promise-order_0.webp');
+const promise4 = require('../assets/images/on-time-delivery_0.webp');
+const CategpriesHero = require('../assets/images/CategoyHero.jpeg');
+const catSvg = require('../assets/svgs/wave.svg');
 
 export default {
   romaLogo,
@@ -58,4 +64,10 @@ export default {
   cake4,
   cake5,
   cake6,
+  promise1,
+  promise2,
+  promise3,
+  promise4,
+  CategpriesHero,
+  catSvg,
 };

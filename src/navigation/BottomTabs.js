@@ -2,13 +2,8 @@ import React from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {
-  CakeScreen,
-  ConnectWith,
-  Home,
-  MyOrders,
-  Profile,
-} from '../screens/appScreen';
+import {CakeScreen, ConnectWith, MyOrders, Profile} from '../screens/appScreen';
+import HomeStack from './HomeStack';
 import {COLORS, icons, FONTS, SIZES} from '../constants';
 
 const BottomTab = createBottomTabNavigator();
@@ -29,7 +24,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: RFValue(5),
-    borderColor: COLORS.white,
+    borderColor: COLORS.pinkybg,
   },
   iconStyle: {
     width: RFValue(25),
@@ -150,7 +145,7 @@ export default function BottomTabs() {
       {/* Middle Tab */}
       <BottomTab.Screen
         name={'Home'}
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarLabel: 'الرئيسية',
           tabBarIcon: ({focused}) => (

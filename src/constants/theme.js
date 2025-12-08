@@ -13,6 +13,7 @@ export const COLORS = {
   primary400: '#E15896',
   primary800: '#922758',
   primary100: '#FFF4EF',
+  pinkybg: '#FFF5F9',
 
   // Secondary colors (Cyan)
   secondary: '#6DC8D8',

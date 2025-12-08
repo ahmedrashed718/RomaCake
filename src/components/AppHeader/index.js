@@ -45,7 +45,7 @@ export default function AppHeader({
                   style={[styles.headerIconButton, styles.backButton]}
                   onPress={onBackPress}
                   activeOpacity={0.8}>
-                  <Icon name="arrow-right" size={RFValue(20)} color="#E23D88" />
+                  <Icon name="arrow-left" size={RFValue(20)} color="#E23D88" />
                 </TouchableOpacity>
               )}
 
