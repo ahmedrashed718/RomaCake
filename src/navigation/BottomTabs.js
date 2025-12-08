@@ -2,9 +2,15 @@ import React from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {CakeScreen, ConnectWith, MyOrders, Profile} from '../screens/appScreen';
+import {
+  CakeScreen,
+  CategoriesPage,
+  ConnectWith,
+  MyOrders,
+  Profile,
+} from '../screens/appScreen';
 import HomeStack from './HomeStack';
-import {COLORS, icons, FONTS, SIZES} from '../constants';
+import {COLORS, icons, FONTS, SIZES, Images} from '../constants';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -75,15 +81,18 @@ const TabBarBackground = () => {
   );
 };
 
-const TabIcon = ({focused, icon, icon2}) => {
+const TabIcon = ({focused, icon, icon2, iconSize, inactiveIconSize, noTint}) => {
   if (focused) {
     return (
       <View style={styles.subscribeContainer}>
         <Image
           source={icon2}
-          style={{width: RFValue(30), height: RFValue(30)}}
+          style={{
+            width: iconSize ? RFValue(iconSize) : RFValue(30),
+            height: iconSize ? RFValue(iconSize) : RFValue(30),
+          }}
           resizeMode="contain"
-          tintColor={'white'}
+          tintColor="white"
         />
       </View>
     );
@@ -93,7 +102,11 @@ const TabIcon = ({focused, icon, icon2}) => {
     <View style={styles.tabContainer}>
       <Image
         source={icon}
-        style={styles.iconStyle}
+        style={
+          inactiveIconSize
+            ? {width: RFValue(inactiveIconSize), height: RFValue(inactiveIconSize)}
+            : styles.iconStyle
+        }
         tintColor={COLORS.white}
         resizeMode="contain"
       />
@@ -117,7 +130,7 @@ export default function BottomTabs() {
       {/* Home Tab 1 */}
       <BottomTab.Screen
         name={'CakeScreen'}
-        component={CakeScreen}
+        component={CategoriesPage}
         options={{
           tabBarLabel: 'الكيك',
           tabBarIcon: ({focused}) => (
@@ -149,7 +162,14 @@ export default function BottomTabs() {
         options={{
           tabBarLabel: 'الرئيسية',
           tabBarIcon: ({focused}) => (
-            <TabIcon focused={focused} icon={icons.home2} icon2={icons.home} />
+            <TabIcon
+              focused={focused}
+              icon={Images.romaLogo}
+              icon2={Images.romaLogo}
+              iconSize={55}
+              inactiveIconSize={38}
+              noTint={true}
+            />
           ),
         }}
       />

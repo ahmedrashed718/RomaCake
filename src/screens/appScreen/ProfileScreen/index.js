@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: COLORS.primary,
-    paddingTop: Platform.OS === 'ios' ? RFValue(50) : RFValue(30),
+    paddingTop: RFValue(50),
     paddingBottom: RFValue(25),
     borderBottomLeftRadius: RFValue(30),
     borderBottomRightRadius: RFValue(30),
