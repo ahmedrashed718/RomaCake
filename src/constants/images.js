@@ -34,6 +34,7 @@ const promise4 = require('../assets/images/on-time-delivery_0.webp');
 const CategpriesHero = require('../assets/images/CategoyHero.jpeg');
 const catSvg = require('../assets/svgs/wave.svg');
 const heroOss = require('../assets/images/customCakeBg3.png');
+const customCakeBg = require('../assets/images/customCakeBg.png');
 export default {
   romaLogo,
   Logo,
@@ -71,4 +72,5 @@ export default {
   CategpriesHero,
   catSvg,
   heroOss,
+  customCakeBg,
 };

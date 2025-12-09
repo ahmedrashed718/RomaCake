@@ -247,13 +247,16 @@ export default function CartDrawer({
               <View style={styles.actionButtons}>
                 <TouchableOpacity
                   style={styles.completeOrderButton}
-                  onPress={onCompleteOrder}>
+                  onPress={onCompleteOrder}
+                  activeOpacity={0.85}>
                   <LinearGradient
                     colors={[COLORS.primary, COLORS.secondary]}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0}}
                     style={styles.completeOrderGradient}>
-                    <Icon name="credit-card" size={RFValue(12)} color="#fff" />
+                    <View style={styles.completeOrderIconWrapper}>
+                      <Icon name="check-circle" size={RFValue(16)} color="#fff" />
+                    </View>
                     <Text style={styles.completeOrderText}>إتمام الطلب</Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -480,17 +483,36 @@ const styles = StyleSheet.create({
   },
 
   actionButtons: {padding: RFValue(10), gap: RFValue(8)},
-  completeOrderButton: {borderRadius: RFValue(8), overflow: 'hidden'},
+  completeOrderButton: {
+    borderRadius: RFValue(10),
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: COLORS.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
   completeOrderGradient: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: RFValue(10),
-    gap: RFValue(5),
+    alignItems: 'center',
+    paddingVertical: RFValue(12),
+    paddingHorizontal: RFValue(15),
+    gap: RFValue(8),
+  },
+  completeOrderIconWrapper: {
+    width: RFValue(24),
+    height: RFValue(24),
+    borderRadius: RFValue(12),
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   completeOrderText: {
-    fontSize: RFValue(13),
+    fontSize: RFValue(14),
     color: '#fff',
     fontFamily: FONTS.fontFamilyBold,
+    letterSpacing: 0.3,
   },
   continueShoppingButton: {
     backgroundColor: '#fff',

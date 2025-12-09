@@ -110,9 +110,31 @@ export default function HomeScreen() {
   };
 
   const handleCompleteOrder = () => {
-    console.log('Complete order pressed');
-    // Navigate to checkout or handle order completion
+    // Calculate order totals
+    const subtotal = cartItems.reduce(
+      (sum, item) => sum + item.currentPrice * item.quantity,
+      0,
+    );
+    const discount = cartItems.reduce(
+      (sum, item) =>
+        sum + (item.originalPrice - item.currentPrice) * item.quantity,
+      0,
+    );
+    const total = subtotal;
+
+    // Prepare order data
+    const orderData = {
+      cartItems: cartItems,
+      subtotal: subtotal,
+      discount: discount,
+      total: total,
+    };
+
+    // Close cart drawer
     setCartDrawerVisible(false);
+
+    // Navigate to checkout page
+    navigation.navigate('CheckoutPage', {orderData});
   };
 
   const handleContinueShopping = () => {
