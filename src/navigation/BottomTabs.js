@@ -80,7 +80,14 @@ const TabBarBackground = () => {
   );
 };
 
-const TabIcon = ({focused, icon, icon2, iconSize, inactiveIconSize, noTint}) => {
+const TabIcon = ({
+  focused,
+  icon,
+  icon2,
+  iconSize,
+  inactiveIconSize,
+  noTint,
+}) => {
   if (focused) {
     return (
       <View style={styles.subscribeContainer}>
@@ -103,7 +110,10 @@ const TabIcon = ({focused, icon, icon2, iconSize, inactiveIconSize, noTint}) => 
         source={icon}
         style={
           inactiveIconSize
-            ? {width: RFValue(inactiveIconSize), height: RFValue(inactiveIconSize)}
+            ? {
+                width: RFValue(inactiveIconSize),
+                height: RFValue(inactiveIconSize),
+              }
             : styles.iconStyle
         }
         tintColor={COLORS.white}

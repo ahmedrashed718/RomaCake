@@ -659,6 +659,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.fontFamilyBold,
     color: '#fff',
     ...FONTS.body2,
-    fontSize: RFValue(12),
+    fontSize: RFValue(10),
   },
 });
