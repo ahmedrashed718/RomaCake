@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
-  Platform,
   Modal,
 } from 'react-native';
 import {FONTS, COLORS} from '../../../constants';

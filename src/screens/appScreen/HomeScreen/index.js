@@ -2,18 +2,19 @@ import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   FlatList,
   Dimensions,
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
-import {FONTS, COLORS, Images} from '../../../constants';
+import {COLORS, Images, lotties} from '../../../constants';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
 import AppHeader from '../../../components/AppHeader';
+import CartDrawer from '../../../components/CartDrawer';
 import {
   SLIDER_DATA,
   CATEGORIES_DATA,
@@ -22,10 +23,10 @@ import {
   PROMISES_DATA,
 } from './testData';
 import {useNavigation} from '@react-navigation/native';
+import styles from './style';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 const SLIDER_WIDTH = SCREEN_WIDTH;
-const SLIDER_HEIGHT = RFValue(180);
 const CATEGORY_CARD_WIDTH = (SCREEN_WIDTH - 35) / 3;
 const OCCASION_CARD_WIDTH = (SCREEN_WIDTH - 60) / 3;
 const PRODUCT_CARD_WIDTH = (SCREEN_WIDTH - 55) / 2;
@@ -37,6 +38,33 @@ export default function HomeScreen() {
   const [occasionIndex, setOccasionIndex] = useState(0);
   const [productIndex, setProductIndex] = useState(0);
   const [products, setProducts] = useState(PRODUCTS_DATA);
+  const [cartDrawerVisible, setCartDrawerVisible] = useState(false);
+  const [cartItems, setCartItems] = useState([
+    {
+      id: '1',
+      title: 'كيك الفراولة الملكي',
+      image: Images.cake1,
+      originalPrice: 420,
+      currentPrice: 365,
+      quantity: 3,
+    },
+    {
+      id: '2',
+      title: 'كيك الشوكولاتة الفاخر',
+      image: Images.cake2,
+      originalPrice: 500,
+      currentPrice: 450,
+      quantity: 2,
+    },
+    {
+      id: '3',
+      title: 'كيك الفانيليا الكلاسيكي',
+      image: Images.cake3,
+      originalPrice: 380,
+      currentPrice: 320,
+      quantity: 1,
+    },
+  ]);
   const flatListRef = useRef(null);
   const categoryListRef = useRef(null);
   const occasionListRef = useRef(null);
@@ -62,7 +90,33 @@ export default function HomeScreen() {
   };
 
   const handleCartPress = () => {
-    console.log('Cart pressed');
+    setCartDrawerVisible(true);
+  };
+
+  const handleCloseCartDrawer = () => {
+    setCartDrawerVisible(false);
+  };
+
+  const handleRemoveCartItem = itemId => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
+  };
+
+  const handleUpdateCartQuantity = (itemId, newQuantity) => {
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === itemId ? {...item, quantity: newQuantity} : item,
+      ),
+    );
+  };
+
+  const handleCompleteOrder = () => {
+    console.log('Complete order pressed');
+    // Navigate to checkout or handle order completion
+    setCartDrawerVisible(false);
+  };
+
+  const handleContinueShopping = () => {
+    setCartDrawerVisible(false);
   };
 
   const handleFavoritePress = () => {
@@ -390,7 +444,17 @@ export default function HomeScreen() {
         onCartPress={handleCartPress}
         onFavoritePress={handleFavoritePress}
         onSearchPress={handleSearchPress}
-        cartBadgeCount={3}
+        cartBadgeCount={cartItems.length}
+      />
+
+      <CartDrawer
+        visible={cartDrawerVisible}
+        onClose={handleCloseCartDrawer}
+        cartItems={cartItems}
+        onRemoveItem={handleRemoveCartItem}
+        onUpdateQuantity={handleUpdateCartQuantity}
+        onCompleteOrder={handleCompleteOrder}
+        onContinueShopping={handleContinueShopping}
       />
 
       <ScrollView
@@ -442,7 +506,6 @@ export default function HomeScreen() {
             ))}
           </View>
         </View>
-
         {/* Categories Section */}
         <View style={styles.categoriesSection}>
           <View style={styles.categoryHeaderContainer}>
@@ -508,6 +571,53 @@ export default function HomeScreen() {
               </TouchableOpacity>
             )}
           </View>
+        </View>
+
+        {/* Lottie Animation Section */}
+        <View style={styles.lottieSectionWrapper}>
+          {/* Top Shadow */}
+          <LinearGradient
+            colors={[
+              `${COLORS.primary}20`,
+              `${COLORS.primary}10`,
+              'transparent',
+            ]}
+            style={styles.lottieTopShadow}
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 1}}
+          />
+          <View style={styles.lottieBackground}>
+            <View style={styles.lottieContentContainer}>
+              {/* Lottie Animation */}
+              <View style={styles.lottieWrapper}>
+                <LottieView
+                  source={lotties.lot}
+                  autoPlay
+                  loop
+                  style={styles.lottieAnimation}
+                />
+              </View>
+
+              {/* Title Text */}
+              <View style={styles.lottieTextContainer}>
+                <Text style={styles.lottieTitle}>صمم كيكتك على كيفك</Text>
+                <Text style={styles.lottieSubtitle}>
+                  من المقاس للنكهة... كل شي بيدك وتشوفه لحظياً
+                </Text>
+              </View>
+            </View>
+          </View>
+          {/* Bottom Shadow */}
+          <LinearGradient
+            colors={[
+              'transparent',
+              `${COLORS.primary}10`,
+              `${COLORS.primary}20`,
+            ]}
+            style={styles.lottieBottomShadow}
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 1}}
+          />
         </View>
 
         {/* Occasions Section */}
@@ -636,9 +746,7 @@ export default function HomeScreen() {
           />
 
           {/* View All Button */}
-          <TouchableOpacity
-            onPress={handleViewAllProducts}
-            activeOpacity={0.8}>
+          <TouchableOpacity onPress={handleViewAllProducts} activeOpacity={0.8}>
             <LinearGradient
               colors={[COLORS.primary, COLORS.secondary]}
               start={{x: 0, y: 0}}
@@ -686,733 +794,3 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.pinkybg,
-  },
-  scrollView: {
-    flex: 1,
-    backgroundColor: COLORS.pinkybg,
-  },
-  // Slider Styles
-  sliderSection: {
-    marginTop: 15,
-    marginBottom: 20,
-    height: SLIDER_HEIGHT,
-  },
-  sliderContentContainer: {
-    paddingHorizontal: 0,
-  },
-  slideContainer: {
-    width: SLIDER_WIDTH,
-    height: SLIDER_HEIGHT,
-    paddingHorizontal: 15,
-  },
-  slideBackground: {
-    borderRadius: RFValue(20),
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  slideBackgroundImage: {
-    resizeMode: 'cover',
-  },
-  gradientOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  slideContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  slideTitle: {
-    fontSize: RFValue(18),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 6,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 5,
-  },
-  slideDescription: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 12,
-    paddingHorizontal: 12,
-    lineHeight: RFValue(16),
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 4,
-  },
-  orderButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#fff',
-    gap: 6,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  orderButtonText: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#fff',
-  },
-  // Navigation Arrows
-  navButton: {
-    position: 'absolute',
-    top: '50%',
-    transform: [{translateY: -16}],
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255, 105, 180, 0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  navButtonLeft: {
-    left: 15,
-  },
-  navButtonRight: {
-    right: 15,
-  },
-  // Pagination Dots
-  paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 10,
-    left: 0,
-    right: 0,
-  },
-  paginationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    marginHorizontal: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  paginationDotActive: {
-    width: 20,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.4,
-    shadowRadius: 2,
-    elevation: 3,
-  },
-  // Categories Section
-  categoriesSection: {
-    paddingTop: 5,
-    paddingBottom: 15,
-  },
-  categoryHeaderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 15,
-  },
-  categoryTitleWrapper: {
-    flex: 1,
-  },
-  categoryMainTitle: {
-    fontSize: RFValue(20),
-    fontFamily: FONTS.funPlayBold,
-    color: COLORS.primary,
-  },
-  categorySubTitle: {
-    fontSize: RFValue(10),
-    fontFamily: FONTS.fontFamilyLight,
-    color: COLORS.lightGray7,
-    marginTop: 2,
-  },
-  categorySliderContainer: {
-    position: 'relative',
-  },
-  viewAllCategoryButtonGradient: {
-    borderRadius: 20,
-    padding: 1.5,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  viewAllCategoryButtonInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 19,
-    gap: 4,
-  },
-  viewAllCategoryText: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.primary,
-  },
-  categoriesGrid: {
-    paddingLeft: 12,
-    paddingRight: 8,
-    paddingVertical: 5,
-  },
-  categoryCard: {
-    alignItems: 'center',
-    marginRight: 6,
-    width: CATEGORY_CARD_WIDTH,
-  },
-  categoryCircleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  categoryFrameImage: {
-    width: CATEGORY_CARD_WIDTH - 10,
-    height: CATEGORY_CARD_WIDTH - 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  categoryFrameImageStyle: {
-    resizeMode: 'contain',
-  },
-  categoryCircleInner: {
-    width: CATEGORY_CARD_WIDTH - 28,
-    height: CATEGORY_CARD_WIDTH - 28,
-    borderRadius: (CATEGORY_CARD_WIDTH - 28) / 2,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-    shadowColor: COLORS.secondary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  categoryImage: {
-    width: '100%',
-    height: '100%',
-  },
-  categoryImageStyle: {
-    resizeMode: 'cover',
-  },
-  categoryTitle: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#922758',
-    textAlign: 'center',
-    lineHeight: RFValue(14),
-    maxWidth: CATEGORY_CARD_WIDTH,
-  },
-  // Category Navigation Arrows
-  categoryNavButton: {
-    position: 'absolute',
-    top: '35%',
-    transform: [{translateY: -16}],
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255, 105, 180, 0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  categoryNavButtonLeft: {
-    left: 5,
-  },
-  categoryNavButtonRight: {
-    right: 5,
-  },
-  // Occasions Section
-  occasionsSection: {
-    paddingTop: 10,
-    paddingBottom: 20,
-    backgroundColor: COLORS.pinkybg,
-  },
-  occasionHeaderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 15,
-  },
-  occasionTitleWrapper: {
-    flex: 1,
-  },
-  occasionMainTitle: {
-    fontSize: RFValue(20),
-    fontFamily: FONTS.funPlayBold,
-    color: COLORS.primary,
-  },
-  occasionSubTitle: {
-    fontSize: RFValue(10),
-    fontFamily: FONTS.fontFamilyLight,
-    color: COLORS.lightGray7,
-    marginTop: 2,
-  },
-  viewAllOccasionButtonGradient: {
-    borderRadius: 20,
-    padding: 1.5,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  viewAllOccasionButtonInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 19,
-    gap: 4,
-  },
-  viewAllOccasionText: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.primary,
-  },
-  occasionSliderContainer: {
-    position: 'relative',
-    marginBottom: 15,
-  },
-  occasionsGrid: {
-    paddingLeft: 15,
-    paddingRight: 10,
-    paddingVertical: 5,
-  },
-  occasionCard: {
-    width: OCCASION_CARD_WIDTH,
-    marginRight: 15,
-    alignItems: 'center',
-  },
-  occasionImageContainer: {
-    width: OCCASION_CARD_WIDTH,
-    height: OCCASION_CARD_WIDTH,
-    borderRadius: RFValue(15),
-    overflow: 'hidden',
-    backgroundColor: '#fff',
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
-    marginBottom: 10,
-  },
-  occasionImage: {
-    width: '100%',
-    height: '100%',
-  },
-  occasionImageStyle: {
-    resizeMode: 'cover',
-  },
-  occasionGradient: {
-    flex: 1,
-  },
-  occasionTitle: {
-    fontSize: RFValue(13),
-    fontFamily: FONTS.funPlayBold,
-    color: COLORS.primary,
-    textAlign: 'center',
-    maxWidth: OCCASION_CARD_WIDTH,
-  },
-  // Occasion Navigation Arrows
-  occasionNavButton: {
-    position: 'absolute',
-    top: '35%',
-    transform: [{translateY: -16}],
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255, 105, 180, 0.85)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  occasionNavButtonLeft: {
-    left: 5,
-  },
-  occasionNavButtonRight: {
-    right: 5,
-  },
-  // Occasion Pagination
-  occasionPaginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  occasionPaginationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(146, 39, 88, 0.3)',
-    marginHorizontal: 4,
-  },
-  occasionPaginationDotActive: {
-    width: 20,
-    backgroundColor: COLORS.primary,
-    shadowColor: COLORS.primary,
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.4,
-    shadowRadius: 2,
-    elevation: 3,
-  },
-  // Products Section
-  productsSection: {
-    paddingTop: 20,
-    paddingBottom: 25,
-    backgroundColor: COLORS.pinkybg,
-  },
-  productHeaderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    marginBottom: 15,
-  },
-  productMainTitle: {
-    fontSize: RFValue(20),
-    fontFamily: FONTS.funPlayBold,
-    color: COLORS.primary,
-  },
-  productNavButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  productHeaderNavButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  productsGrid: {
-    paddingLeft: 15,
-    paddingRight: 10,
-  },
-  productCard: {
-    width: PRODUCT_CARD_WIDTH,
-    backgroundColor: '#fff',
-    borderRadius: RFValue(12),
-    marginRight: 10,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 5,
-    elevation: 4,
-    overflow: 'hidden',
-    marginBottom: 10,
-  },
-  productImageContainer: {
-    width: '100%',
-    height: PRODUCT_CARD_WIDTH * 0.95,
-    position: 'relative',
-  },
-  productImage: {
-    width: '100%',
-    height: '100%',
-  },
-  productImageStyle: {
-    resizeMode: 'cover',
-  },
-  newBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 3,
-  },
-  newBadgeText: {
-    fontSize: RFValue(9),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#fff',
-  },
-  favoriteButton: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
-  },
-  favoriteButtonActive: {
-    backgroundColor: COLORS.primary,
-  },
-  productInfo: {
-    padding: 10,
-    paddingBottom: 8,
-  },
-  productTitle: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.primary,
-    marginBottom: 2,
-  },
-  productSubtitle: {
-    fontSize: RFValue(10),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#666',
-    marginBottom: 5,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    gap: 2,
-  },
-  ratingText: {
-    fontSize: RFValue(10),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#333',
-  },
-  reviewsText: {
-    fontSize: RFValue(8),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#999',
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF8DC',
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-    gap: 3,
-  },
-  priceLabel: {
-    fontSize: RFValue(9),
-    fontFamily: FONTS.fontFamilyMedium,
-    color: COLORS.primary,
-  },
-  priceValue: {
-    fontSize: RFValue(13),
-    fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.primary,
-  },
-  addToCartButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.secondary,
-    marginHorizontal: 10,
-    marginBottom: 10,
-    paddingVertical: 8,
-    borderRadius: 8,
-    gap: 5,
-  },
-  addToCartText: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#fff',
-  },
-  viewAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 'auto',
-    marginTop: 15,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    gap: 8,
-    alignSelf: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  viewAllButtonText: {
-    fontSize: RFValue(13),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#fff',
-  },
-  // Promises Section
-  promisesSection: {
-    paddingTop: 20,
-    paddingBottom: 30,
-    backgroundColor: '#FFF8F8',
-    marginTop: 10,
-  },
-  promiseHeaderContainer: {
-    alignItems: 'center',
-    marginBottom: 25,
-    paddingHorizontal: 20,
-  },
-  promiseMainTitle: {
-    fontSize: RFValue(22),
-    fontFamily: FONTS.funPlayBold,
-    color: '#D63854',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  promiseSubTitle: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: RFValue(18),
-  },
-  promisesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 15,
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  promiseCard: {
-    width: (SCREEN_WIDTH - 42) / 2,
-    minHeight: RFValue(185),
-    backgroundColor: '#fff',
-    borderRadius: RFValue(15),
-    paddingVertical: 18,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  promiseIconContainer: {
-    width: RFValue(65),
-    height: RFValue(65),
-    marginBottom: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  promiseIcon: {
-    width: '100%',
-    height: '100%',
-  },
-  promiseIconImageStyle: {
-    resizeMode: 'contain',
-  },
-  promiseTitle: {
-    fontSize: RFValue(14),
-    fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.primary,
-    textAlign: 'center',
-    marginBottom: 8,
-    minHeight: RFValue(32),
-    lineHeight: RFValue(16),
-  },
-  promiseDescription: {
-    fontSize: RFValue(10),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: RFValue(14),
-    minHeight: RFValue(42),
-  },
-  // Content Section
-  contentSection: {
-    padding: 20,
-    paddingTop: 10,
-    paddingBottom: 80,
-  },
-});
