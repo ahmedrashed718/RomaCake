@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  KeyboardAvoidingView,
   Platform,
   Image,
   StatusBar,
@@ -39,9 +38,7 @@ export default function SignUpScreen({navigation}) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}>
+    <View style={styles.container}>
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -59,7 +56,8 @@ export default function SignUpScreen({navigation}) {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled">
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
           {/* SignUp Card */}
           <View style={styles.card}>
             {/* Logo */}
@@ -74,12 +72,15 @@ export default function SignUpScreen({navigation}) {
             {/* Title */}
             <Text style={styles.title}>إنشاء حساب جديد</Text>
             <Text style={styles.subtitle}>
-              انضم لعائم روما كيك واستمتع بطلباتك أسهل ومزايا خاصة 🧁
+              انضم لعائم روما كيك واستمتع بطلباتك أسهل ومزايا خاصة
             </Text>
 
             {/* Full Name Input */}
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>الاسم الكامل</Text>
+              <Text style={styles.label}>
+                <Text>الاسم الكامل</Text>
+                <Text style={styles.requiredStar}> *</Text>
+              </Text>
               <View
                 style={[
                   styles.inputWrapper,
@@ -99,6 +100,37 @@ export default function SignUpScreen({navigation}) {
                   onChangeText={setFullName}
                   onFocus={() => setFullNameFocused(true)}
                   onBlur={() => setFullNameFocused(false)}
+                  textAlign="right"
+                />
+              </View>
+            </View>
+
+            {/* Phone Input */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                <Text>رقم الجوال</Text>
+                <Text style={styles.requiredStar}> *</Text>
+              </Text>
+              <View
+                style={[
+                  styles.inputWrapper,
+                  phoneFocused && styles.inputWrapperFocused,
+                ]}>
+                <Icon
+                  name="phone-outline"
+                  size={RFValue(16)}
+                  color={phoneFocused ? COLORS.primary : COLORS.grey60}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="05xxxxxxxx"
+                  placeholderTextColor={COLORS.grey60}
+                  value={phone}
+                  onChangeText={setPhone}
+                  onFocus={() => setPhoneFocused(true)}
+                  onBlur={() => setPhoneFocused(false)}
+                  keyboardType="phone-pad"
                   textAlign="right"
                 />
               </View>
@@ -133,37 +165,12 @@ export default function SignUpScreen({navigation}) {
               </View>
             </View>
 
-            {/* Phone Input */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>رقم الجوال</Text>
-              <View
-                style={[
-                  styles.inputWrapper,
-                  phoneFocused && styles.inputWrapperFocused,
-                ]}>
-                <Icon
-                  name="phone-outline"
-                  size={RFValue(16)}
-                  color={phoneFocused ? COLORS.primary : COLORS.grey60}
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="05xxxxxxxx"
-                  placeholderTextColor={COLORS.grey60}
-                  value={phone}
-                  onChangeText={setPhone}
-                  onFocus={() => setPhoneFocused(true)}
-                  onBlur={() => setPhoneFocused(false)}
-                  keyboardType="phone-pad"
-                  textAlign="right"
-                />
-              </View>
-            </View>
-
             {/* Password Input */}
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>كلمة المرور</Text>
+              <Text style={styles.label}>
+                <Text>كلمة المرور</Text>
+                <Text style={styles.requiredStar}> *</Text>
+              </Text>
               <View
                 style={[
                   styles.inputWrapper,
@@ -194,7 +201,10 @@ export default function SignUpScreen({navigation}) {
 
             {/* Confirm Password Input */}
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>تأكيد كلمة المرور</Text>
+              <Text style={styles.label}>
+                <Text>تأكيد كلمة المرور</Text>
+                <Text style={styles.requiredStar}> *</Text>
+              </Text>
               <View
                 style={[
                   styles.inputWrapper,
@@ -275,7 +285,7 @@ export default function SignUpScreen({navigation}) {
           </View>
         </ScrollView>
       </LinearGradient>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -392,6 +402,10 @@ const styles = StyleSheet.create({
     marginBottom: RFValue(5),
     ...FONTS.body5,
   },
+  requiredStar: {
+    color: COLORS.primary,
+    fontSize: RFValue(11),
+  },
   inputWrapper: {
     position: 'relative',
     borderRadius: RFValue(12),
@@ -463,7 +477,7 @@ const styles = StyleSheet.create({
     color: COLORS.darkGray,
     flex: 1,
     // textAlign: 'right',
-    marginRight: RFValue(8),
+    marginLeft: RFValue(8),
     ...FONTS.body5,
     fontSize: RFValue(10),
   },
