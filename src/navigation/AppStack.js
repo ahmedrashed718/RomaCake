@@ -3,7 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useSelector} from 'react-redux';
 import BottomTabs from './BottomTabs';
 import AuthStack from './AuthStack';
-import {CategoriesPage, OccasionsPage, ProductsPage, CheckoutPage, ConfirmationPage} from '../screens/appScreen';
+import {CategoriesPage, OccasionsPage, ProductsPage, CheckoutPage, ConfirmationPage, CartPage} from '../screens/appScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +32,7 @@ const AppStack = () => {
           <Stack.Screen name="CategoriesPage" component={CategoriesPage} />
           <Stack.Screen name="OccasionsPage" component={OccasionsPage} />
           <Stack.Screen name="ProductsPage" component={ProductsPage} />
+          <Stack.Screen name="CartPage" component={CartPage} />
           <Stack.Screen name="CheckoutPage" component={CheckoutPage} />
           <Stack.Screen name="ConfirmationPage" component={ConfirmationPage} />
         </>

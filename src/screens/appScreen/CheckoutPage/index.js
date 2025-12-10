@@ -2,12 +2,12 @@ import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   TextInput,
   Dimensions,
   ImageBackground,
+  Image,
 } from 'react-native';
 import {FONTS, COLORS, Images} from '../../../constants';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -15,8 +15,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import AppHeader from '../../../components/AppHeader';
-import Svg, {Path} from 'react-native-svg';
+import Svg, {Path, Rect, G} from 'react-native-svg';
 import utils from '../../../utils';
+import MadaIcon from '../../../assets/svgs/mada.svg';
+import styles from './style';
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 const HERO_HEIGHT = SCREEN_HEIGHT * 0.28;
@@ -40,7 +42,8 @@ export default function CheckoutPage() {
   const [notes, setNotes] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod', 'card', or 'installment'
   const [showCityDropdown, setShowCityDropdown] = useState(false);
-  const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
+  const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] =
+    useState(false);
 
   // Cities data
   const citiesData = [
@@ -108,7 +111,7 @@ export default function CheckoutPage() {
   ];
 
   const cities = citiesData.map(item => item.city);
-  
+
   // Get neighborhoods for selected city
   const getNeighborhoods = () => {
     const selectedCityData = citiesData.find(item => item.city === city);
@@ -539,10 +542,13 @@ export default function CheckoutPage() {
                         styles.dropdownText,
                         !neighborhood && styles.dropdownPlaceholder,
                       ]}>
-                      {neighborhood || (city ? 'اختر الحي' : 'اختر المدينة أولاً')}
+                      {neighborhood ||
+                        (city ? 'اختر الحي' : 'اختر المدينة أولاً')}
                     </Text>
                     <Icon
-                      name={showNeighborhoodDropdown ? 'chevron-up' : 'chevron-down'}
+                      name={
+                        showNeighborhoodDropdown ? 'chevron-up' : 'chevron-down'
+                      }
                       size={RFValue(20)}
                       color={
                         neighborhoodFocused && city
@@ -625,19 +631,25 @@ export default function CheckoutPage() {
                 onPress={() => setPaymentMethod('cod')}
                 activeOpacity={0.85}>
                 <View style={styles.paymentOptionContent}>
-                  <View style={styles.radioButton}>
+                  <View
+                    style={[
+                      styles.radioButton,
+                      paymentMethod === 'cod' && styles.radioButtonSelected,
+                    ]}>
                     {paymentMethod === 'cod' && (
                       <View style={styles.radioButtonInner} />
                     )}
                   </View>
-                  <View style={styles.paymentIconWrapper}>
+                  <View
+                    style={[
+                      styles.paymentIconWrapper,
+                      paymentMethod === 'cod' && styles.paymentIconWrapperActive,
+                    ]}>
                     <Icon
                       name="cash"
-                      size={RFValue(18)}
+                      size={RFValue(22)}
                       color={
-                        paymentMethod === 'cod'
-                          ? COLORS.primary
-                          : COLORS.grey60
+                        paymentMethod === 'cod' ? COLORS.primary : COLORS.grey60
                       }
                     />
                   </View>
@@ -661,15 +673,23 @@ export default function CheckoutPage() {
                 onPress={() => setPaymentMethod('card')}
                 activeOpacity={0.85}>
                 <View style={styles.paymentOptionContent}>
-                  <View style={styles.radioButton}>
+                  <View
+                    style={[
+                      styles.radioButton,
+                      paymentMethod === 'card' && styles.radioButtonSelected,
+                    ]}>
                     {paymentMethod === 'card' && (
                       <View style={styles.radioButtonInner} />
                     )}
                   </View>
-                  <View style={styles.paymentIconWrapper}>
+                  <View
+                    style={[
+                      styles.paymentIconWrapper,
+                      paymentMethod === 'card' && styles.paymentIconWrapperActive,
+                    ]}>
                     <Icon
                       name="credit-card"
-                      size={RFValue(18)}
+                      size={RFValue(22)}
                       color={
                         paymentMethod === 'card'
                           ? COLORS.primary
@@ -686,6 +706,24 @@ export default function CheckoutPage() {
                     </Text>
                   </View>
                 </View>
+                <View style={styles.paymentCardsContainer}>
+                  <Image
+                    source={Images.visa1}
+                    style={styles.paymentCardLogo}
+                    resizeMode="contain"
+                  />
+                  <Image
+                    source={Images.mastercard1}
+                    style={styles.paymentCardLogo}
+                    resizeMode="contain"
+                  />
+                  <View style={[styles.paymentCardLogo, styles.madaContainer]}>
+                    <MadaIcon
+                      width={RFValue(65)}
+                      height={RFValue(40)}
+                    />
+                  </View>
+                </View>
               </TouchableOpacity>
 
               {/* Installment Payment */}
@@ -698,15 +736,25 @@ export default function CheckoutPage() {
                 onPress={() => setPaymentMethod('installment')}
                 activeOpacity={0.85}>
                 <View style={styles.paymentOptionContent}>
-                  <View style={styles.radioButton}>
+                  <View
+                    style={[
+                      styles.radioButton,
+                      paymentMethod === 'installment' &&
+                        styles.radioButtonSelected,
+                    ]}>
                     {paymentMethod === 'installment' && (
                       <View style={styles.radioButtonInner} />
                     )}
                   </View>
-                  <View style={styles.paymentIconWrapper}>
+                  <View
+                    style={[
+                      styles.paymentIconWrapper,
+                      paymentMethod === 'installment' &&
+                        styles.paymentIconWrapperActive,
+                    ]}>
                     <Icon
                       name="calendar-clock"
-                      size={RFValue(18)}
+                      size={RFValue(22)}
                       color={
                         paymentMethod === 'installment'
                           ? COLORS.primary
@@ -716,12 +764,24 @@ export default function CheckoutPage() {
                   </View>
                   <View style={styles.paymentOptionText}>
                     <Text style={styles.paymentOptionTitle}>
-                      الدفع بالتقسيم
+                      الدفع بالتقسيط
                     </Text>
                     <Text style={styles.paymentOptionDescription}>
                       استخدام وسائل تقسيط المدفوعات المختلفة
                     </Text>
                   </View>
+                </View>
+                <View style={styles.paymentCardsContainer}>
+                  <Image
+                    source={Images.tabi1}
+                    style={styles.paymentCardLogoLarge}
+                    resizeMode="contain"
+                  />
+                  <Image
+                    source={Images.tamara1}
+                    style={styles.paymentCardLogoLarge}
+                    resizeMode="contain"
+                  />
                 </View>
               </TouchableOpacity>
             </View>
@@ -750,503 +810,3 @@ export default function CheckoutPage() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.pinkybg,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: RFValue(30),
-  },
-  heroSectionWrapper: {
-    marginBottom: RFValue(20),
-    position: 'relative',
-  },
-  heroSection: {
-    height: HERO_HEIGHT,
-  },
-  heroSlideContainer: {
-    width: '100%',
-    height: '100%',
-  },
-  heroSlideBackground: {
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: RFValue(3),
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: RFValue(8),
-    elevation: RFValue(5),
-  },
-  heroSlideBackgroundImage: {
-    resizeMode: 'cover',
-  },
-  heroGradientOverlay: {
-    flex: 1,
-    alignItems: 'flex-start',
-    paddingTop: RFValue(20),
-    paddingHorizontal: RFValue(10),
-    paddingBottom: RFValue(20),
-  },
-  heroSlideContent: {
-    justifyContent: 'center',
-    width: '100%',
-  },
-  heroMainTitle: {
-    fontSize: RFValue(22),
-    fontFamily: FONTS.funPlayBold,
-    color: '#fff',
-    marginBottom: RFValue(5),
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
-    textShadowOffset: {width: 0, height: RFValue(3)},
-    textShadowRadius: RFValue(6),
-    letterSpacing: RFValue(0.5),
-  },
-  heroSlideTitle: {
-    fontSize: RFValue(16),
-    fontFamily: FONTS.funPlayBold,
-    color: '#fff',
-    marginBottom: RFValue(8),
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: RFValue(2)},
-    textShadowRadius: RFValue(5),
-  },
-  heroSlideDescription: {
-    fontSize: RFValue(15),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#fff',
-    marginBottom: RFValue(12),
-    lineHeight: RFValue(20),
-    width: '50%',
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: {width: 0, height: RFValue(2)},
-    textShadowRadius: RFValue(4),
-    marginTop: RFValue(10),
-  },
-  waveContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    width: SCREEN_WIDTH,
-    height: RFValue(60),
-    zIndex: 100,
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
-  },
-  contentWrapper: {
-    paddingHorizontal: RFValue(15),
-    gap: RFValue(15),
-    marginTop: -RFValue(30),
-    zIndex: 1000,
-  },
-  summaryCard: {
-    backgroundColor: '#fff',
-    borderRadius: RFValue(16),
-    padding: RFValue(20),
-    elevation: 3,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: RFValue(2),
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: RFValue(6),
-    borderWidth: RFValue(2),
-    borderColor: 'transparent',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: RFValue(18),
-    gap: RFValue(8),
-  },
-  sectionTitle: {
-    fontSize: RFValue(18),
-    fontFamily: FONTS.funPlayBold,
-    color: COLORS.primary,
-  },
-  orderItemsList: {
-    marginBottom: RFValue(15),
-  },
-  orderItem: {
-    flexDirection: 'row',
-    marginBottom: RFValue(15),
-    gap: RFValue(12),
-    paddingBottom: RFValue(15),
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  orderItemImage: {
-    width: RFValue(70),
-    height: RFValue(70),
-    borderRadius: RFValue(10),
-    overflow: 'hidden',
-  },
-  discountBadge: {
-    position: 'absolute',
-    top: RFValue(5),
-    left: RFValue(5),
-    backgroundColor: COLORS.secondary,
-    paddingHorizontal: RFValue(5),
-    paddingVertical: RFValue(2),
-    borderRadius: RFValue(5),
-  },
-  discountText: {
-    color: '#fff',
-    fontSize: RFValue(9),
-    fontFamily: FONTS.fontFamilyBold,
-  },
-  orderItemInfo: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  orderItemTitle: {
-    fontSize: RFValue(13),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#333',
-    marginBottom: RFValue(5),
-    // textAlign: 'right',
-  },
-  orderItemQuantity: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#666',
-    marginBottom: RFValue(5),
-    // textAlign: 'right',
-  },
-  orderItemPrice: {
-    fontSize: RFValue(14),
-    fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.primary,
-    // textAlign: 'right',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E0E0E0',
-    marginVertical: RFValue(15),
-  },
-  priceBreakdown: {
-    marginBottom: RFValue(15),
-  },
-  priceRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: RFValue(8),
-    alignItems: 'center',
-  },
-  priceLabel: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#666',
-    // textAlign: 'right',
-  },
-  priceValue: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#333',
-    textAlign: 'left',
-  },
-  discountValue: {
-    color: COLORS.secondary,
-  },
-  totalRow: {
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingTop: RFValue(12),
-    marginTop: RFValue(8),
-  },
-  totalLabel: {
-    fontSize: RFValue(16),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#333',
-    // textAlign: 'right',
-  },
-  totalValue: {
-    fontSize: RFValue(18),
-    fontFamily: FONTS.fontFamilyBold,
-    color: COLORS.primary,
-    textAlign: 'left',
-  },
-  securityMessage: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF2F6',
-    padding: RFValue(12),
-    borderRadius: RFValue(10),
-    gap: RFValue(8),
-    marginTop: RFValue(5),
-  },
-  securityText: {
-    flex: 1,
-    fontSize: RFValue(10),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#666',
-    // textAlign: 'right',
-    lineHeight: RFValue(16),
-  },
-  formSection: {
-    width: '100%',
-  },
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: RFValue(16),
-    padding: RFValue(20),
-    marginBottom: RFValue(15),
-    elevation: 3,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: RFValue(2),
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: RFValue(6),
-    borderWidth: RFValue(2),
-    borderColor: 'transparent',
-  },
-  inputContainer: {
-    marginBottom: RFValue(15),
-  },
-  label: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyMedium,
-    color: '#333',
-    marginBottom: RFValue(8),
-    // textAlign: 'right',
-  },
-  requiredStar: {
-    color: COLORS.primary,
-    fontSize: RFValue(12),
-  },
-  inputWrapper: {
-    borderRadius: RFValue(12),
-    backgroundColor: '#FAFAFA',
-    borderWidth: 2,
-    borderColor: '#E8E8E8',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.04,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  inputWrapperFocused: {
-    borderColor: COLORS.primary,
-    backgroundColor: '#FFF',
-    shadowColor: COLORS.primary,
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  input: {
-    paddingHorizontal: RFValue(15),
-    paddingVertical: RFValue(12),
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#333',
-    // textAlign: 'right',
-  },
-  textAreaWrapper: {
-    minHeight: RFValue(100),
-  },
-  textArea: {
-    paddingTop: RFValue(12),
-    textAlignVertical: 'top',
-  },
-  row: {
-    flexDirection: 'row',
-    gap: RFValue(12),
-  },
-  halfWidth: {
-    flex: 1,
-  },
-  dropdown: {
-    borderRadius: RFValue(12),
-    backgroundColor: '#FAFAFA',
-    borderWidth: 2,
-    borderColor: '#E8E8E8',
-    paddingHorizontal: RFValue(15),
-    paddingVertical: RFValue(12),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.04,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  dropdownFocused: {
-    borderColor: COLORS.primary,
-    backgroundColor: '#FFF',
-    shadowColor: COLORS.primary,
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  dropdownText: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#333',
-    flex: 1,
-    // textAlign: 'right',
-  },
-  dropdownPlaceholder: {
-    color: COLORS.grey60,
-  },
-  dropdownDisabled: {
-    opacity: 0.6,
-    backgroundColor: '#F5F5F5',
-  },
-  dropdownList: {
-    backgroundColor: COLORS.white,
-    borderRadius: RFValue(10),
-    marginTop: RFValue(5),
-    borderWidth: 1.5,
-    borderColor: COLORS.primary300,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 10,
-    overflow: 'hidden',
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    zIndex: 9999,
-    maxHeight: RFValue(150),
-  },
-  dropdownScrollView: {
-    maxHeight: RFValue(150),
-  },
-  dropdownItem: {
-    padding: RFValue(10),
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
-    backgroundColor: COLORS.white,
-    minHeight: RFValue(40),
-    justifyContent: 'center',
-  },
-  dropdownItemText: {
-    fontSize: RFValue(11),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#333',
-    textAlign: 'right',
-  },
-  paymentOption: {
-    borderWidth: 1.5,
-    borderColor: '#E8E8E8',
-    borderRadius: RFValue(10),
-    padding: RFValue(10),
-    marginBottom: RFValue(8),
-    backgroundColor: '#FAFAFA',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.03,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  paymentOptionSelected: {
-    borderColor: COLORS.primary,
-    backgroundColor: '#FFF2F6',
-    shadowColor: COLORS.primary,
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    borderWidth: 2,
-  },
-  paymentOptionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: RFValue(10),
-  },
-  radioButton: {
-    width: RFValue(18),
-    height: RFValue(18),
-    borderRadius: RFValue(9),
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  radioButtonInner: {
-    width: RFValue(8),
-    height: RFValue(8),
-    borderRadius: RFValue(4),
-    backgroundColor: COLORS.primary,
-  },
-  paymentIconWrapper: {
-    width: RFValue(32),
-    height: RFValue(32),
-    borderRadius: RFValue(8),
-    backgroundColor: '#F0F0F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  paymentOptionText: {
-    flex: 1,
-  },
-  paymentOptionTitle: {
-    fontSize: RFValue(12),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#333',
-    marginBottom: RFValue(2),
-    // textAlign: 'right',
-  },
-  paymentOptionDescription: {
-    fontSize: RFValue(10),
-    fontFamily: FONTS.fontFamilyRegular,
-    color: '#666',
-    lineHeight: RFValue(14),
-    // textAlign: 'right',
-  },
-  bottomButtonContainer: {
-    paddingHorizontal: RFValue(15),
-    paddingTop: RFValue(15),
-    paddingBottom: RFValue(20),
-  },
-  completeOrderButton: {
-    borderRadius: RFValue(14),
-    overflow: 'hidden',
-    elevation: 6,
-    shadowColor: COLORS.primary,
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  completeOrderGradient: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: RFValue(12),
-    paddingHorizontal: RFValue(20),
-    gap: RFValue(8),
-  },
-  buttonIconWrapper: {
-    width: RFValue(24),
-    height: RFValue(24),
-    borderRadius: RFValue(12),
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  completeOrderText: {
-    fontSize: RFValue(14),
-    fontFamily: FONTS.fontFamilyBold,
-    color: '#fff',
-    letterSpacing: 0.3,
-  },
-});

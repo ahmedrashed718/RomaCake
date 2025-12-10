@@ -35,6 +35,12 @@ const CategpriesHero = require('../assets/images/CategoyHero.jpeg');
 const catSvg = require('../assets/svgs/wave.svg');
 const heroOss = require('../assets/images/customCakeBg3.png');
 const customCakeBg = require('../assets/images/customCakeBg.png');
+const visa1 = require('../assets/images/visa.png');
+const mastercard1 = require('../assets/images/card.png');
+const tabi1 = require('../assets/images/Tabby-01.png');
+const tamara1 = require('../assets/images/Tamara-01.png');
+const mada = require('../assets/svgs/mada.svg');
+const cartHero = require('../assets/images/CartHero.jpg');
 export default {
   romaLogo,
   Logo,
@@ -73,4 +79,10 @@ export default {
   catSvg,
   heroOss,
   customCakeBg,
+  visa1,
+  mastercard1,
+  tabi1,
+  tamara1,
+  mada,
+  cartHero,
 };

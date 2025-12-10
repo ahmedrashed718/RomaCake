@@ -15,6 +15,7 @@ import {FONTS, COLORS} from '../../constants';
 import {RFValue} from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 const DRAWER_WIDTH = SCREEN_WIDTH * 0.8;
@@ -28,8 +29,15 @@ export default function CartDrawer({
   onCompleteOrder,
   onContinueShopping,
 }) {
+  const navigation = useNavigation();
   const slideAnim = React.useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const backdropOpacity = React.useRef(new Animated.Value(0)).current;
+
+  const handleOpenFullPage = () => {
+    onClose(); // Close drawer first
+    // Pass cart items to CartPage
+    navigation.navigate('CartPage', {cartItems});
+  };
 
   React.useEffect(() => {
     if (visible) {
@@ -194,9 +202,21 @@ export default function CartDrawer({
                 </View>
               </View>
 
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                <Icon name="close" size={RFValue(18)} color="#666" />
-              </TouchableOpacity>
+              <View style={styles.headerRightButtons}>
+                <TouchableOpacity
+                  style={styles.fullPageButton}
+                  onPress={handleOpenFullPage}
+                  activeOpacity={0.7}>
+                  <Icon
+                    name="open-in-new"
+                    size={RFValue(16)}
+                    color={COLORS.primary}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                  <Icon name="close" size={RFValue(18)} color="#666" />
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Cart List */}
@@ -441,6 +461,16 @@ const styles = StyleSheet.create({
     fontSize: RFValue(9),
     color: '#fff',
     fontFamily: FONTS.fontFamilyBold,
+  },
+  headerRightButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: RFValue(8),
+  },
+  fullPageButton: {
+    padding: RFValue(5),
+    backgroundColor: '#FFF2F6',
+    borderRadius: RFValue(6),
   },
   closeButton: {padding: RFValue(3)},
   scrollView: {flex: 1},

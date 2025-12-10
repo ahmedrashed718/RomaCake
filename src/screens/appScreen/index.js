@@ -8,5 +8,6 @@ import OccasionsPage from './OccasionsPage';
 import ProductsPage from './ProductsPage';
 import CheckoutPage from './CheckoutPage';
 import ConfirmationPage from './ConfirmationPage';
+import CartPage from './CartPage';
 
-export {Home, MyOrders, Profile, ConnectWith, CategoriesPage, OccasionsPage, ProductsPage, CheckoutPage, ConfirmationPage};
+export {Home, MyOrders, Profile, ConnectWith, CategoriesPage, OccasionsPage, ProductsPage, CheckoutPage, ConfirmationPage, CartPage};

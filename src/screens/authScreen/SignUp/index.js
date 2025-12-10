@@ -261,7 +261,7 @@ export default function SignUpScreen({navigation}) {
 
             {/* SignUp Button */}
             <TouchableOpacity
-              onPress={handleSignUp}
+              onPress={() => navigation.navigate('Login')}
               activeOpacity={0.8}
               style={styles.signupButton}>
               <LinearGradient
